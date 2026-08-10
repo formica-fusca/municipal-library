@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+
+    // Deliberately empty, and load-bearing.
+    //
+    // `apps/scenarios` sets `"types": ["node"]` because it prints to a console.
+    // This package must run unchanged in a browser, so it gets no ambient
+    // types at all: `console`, `process`, `Buffer` and `__dirname` are all
+    // compile errors here.
+    //
+    // That turns "the composition root is runtime-agnostic" from a claim in a
+    // comment into something `tsc -b` fails on. The `onEvent` callback in
+    // `wiring.ts` exists because of this line.
+    "types": []
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../ddd-core" },
+    { "path": "../shared-kernel" },
+    { "path": "../event-bus" },
+    { "path": "../library/catalog" },
+    { "path": "../library/inventory" },
+    { "path": "../library/membership" },
+    { "path": "../library/lending" },
+    { "path": "../bookshop/inventory" }
+  ]
+}

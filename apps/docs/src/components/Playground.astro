@@ -1,0 +1,985 @@
+---
+/**
+ * The shell for the live aggregate console.
+ *
+ * This file is only markup and styling. Everything with behaviour lives in
+ * `src/scripts/playground.ts`, which mounts onto `[data-playground]` and fills
+ * the `data-*` slots below.
+ *
+ * ## The layout is the argument
+ *
+ * Left column: things you do. Right column: things you watch. The whole point
+ * of this page is play-and-observe, and an event log tucked under the fold
+ * makes the observing optional — which makes the playing pointless.
+ *
+ * ## On the palette
+ *
+ * The status colours are explicit hex rather than Starlight's `--sl-color-*`,
+ * which are tuned to sit quietly behind prose. Here the colour *is* the
+ * information — a shelf you can read at a glance — so it needs to be
+ * saturated. Both themes are defined; the light overrides sit at the bottom of
+ * the token block.
+ *
+ * The styles are `is:global` rather than scoped on purpose: Astro's scoping
+ * works by stamping `data-astro-*` attributes onto elements *in this template*
+ * at build time, and most of what you see here is created at runtime by the
+ * script. Scoped rules would silently miss every generated node. Everything is
+ * namespaced under `.playground` / `.pg-` instead.
+ *
+ * Careful with line breaks in the prose below: Astro trims the newline between
+ * a text node and a following inline element, so a line that *starts* with a
+ * tag loses the space before it. Keep tags off the start of a line.
+ */
+---
+
+<script>
+  // Astro bundles this through Vite, which is what resolves `@local/*` to the
+  // compiled workspace packages. An inline `<script>` in the MDX page would be
+  // passed through as raw HTML and never see the bundler.
+  import '../scripts/playground.ts'
+</script>
+
+<!--
+  `not-content` is load-bearing, not decoration.
+
+  Starlight styles prose with a broad descendant rule — every element that
+  follows a sibling inside `.sl-markdown-content` gets `margin-top: 1rem`, and
+  it matches at any depth, not just top level. Inside a flex row that lands as a
+  16px offset on the second and third children: the three header stats rendered
+  at different heights and vertical positions, because two of them had been
+  pushed down by a rule meant for paragraphs.
+
+  Seventeen elements in here were picking up margins nobody wrote. Starlight
+  excludes `:where(.not-content *)` from those rules, so this one class opts the
+  whole console out of prose styling — which is right, since it is a UI, not
+  prose, and every spacing value inside is set deliberately below.
+-->
+<div class="playground not-content" data-playground>
+  <!--
+    Two zones: the title and what you can ask of it on the left, what it
+    currently says about itself on the right.
+
+    The two commands are nested inside the heading rather than sitting beside
+    it, because both are addressed to the *title* and nothing else. Neither is
+    about a copy you picked — "Lend any copy" is the point: a member borrows a
+    title and the shelf chooses the volume, so a button under one barcode would
+    contradict the rule it exists to show. Putting them directly under the word
+    "Dune" says what they act on without a caption.
+  -->
+  <header class="pg-header">
+    <div class="pg-heading">
+      <h3 class="pg-title">Dune</h3>
+      <p class="pg-subtitle">one title · one <code>BookStock</code> aggregate</p>
+      <div class="pg-commands pg-header-commands" data-stock-commands></div>
+    </div>
+
+    <div class="pg-header-right">
+      <div class="pg-stats" data-summary></div>
+      <button type="button" class="pg-reset" data-reset>Reset</button>
+    </div>
+  </header>
+
+  <!--
+    Full width, between rules, above the two columns.
+
+    It sits outside the do/watch split because it belongs to neither half: it is
+    a thing you do *and* the only place on the page that tells you how to
+    observe. Boxed into the left column it read as a third shelf command, which
+    is exactly backwards — it is the one action that is not a command at all.
+
+    Breaking it and noticing it stay in one box. Split apart, the steps read as
+    background reading you could skip; here they are the second half of the
+    button. There is deliberately no invariant panel and no "check now" control:
+    nothing in a real system stands over an aggregate asking whether it is still
+    coherent, and a page that did would teach the opposite of the lesson.
+  -->
+  <section class="pg-break-band">
+    <div class="pg-break-zone">
+      <div class="pg-break-half">
+        <h5 class="pg-break-title">Break it on purpose</h5>
+        <p class="pg-break-what">
+          <code>BookStock</code> keeps its <code>Copy</code> objects private, and that
+          privacy <em>is</em> the aggregate boundary — not a diagram, a missing export. The
+          method <code>unsafeCopyForTeaching()</code> hands one out anyway: damage it
+          directly and the copy changes, but the root is never told, so it never adjusts the
+          counter it is responsible for.
+        </p>
+        <div class="pg-commands" data-break-commands></div>
+        <p class="pg-break-expect" data-break-expect></p>
+      </div>
+
+      <div class="pg-break-half">
+        <h6 class="pg-break-how">How to watch it break</h6>
+
+        <ol class="pg-steps">
+          <li>
+            Note the two numbers that ought to agree: the <strong>available</strong> figure
+            in the header, and how many copies show a green <strong>Available</strong> pill.
+            Right now they match.
+          </li>
+          <li>
+            Press <strong>Damage … behind the root's back</strong>. That copy
+            flips to <strong>Damaged</strong>.
+          </li>
+          <li>
+            Look again. The header has <em>not</em> moved, but one fewer copy reads
+            Available. Nothing turned red, nothing was logged, no event arrived. You had to
+            look.
+          </li>
+          <li>
+            Now run any ordinary command. <em>That</em> is when it fails, naming the broken
+            invariant — the write path is the first thing in the system to object.
+          </li>
+        </ol>
+
+        <p class="pg-break-why">
+          <code>assertInvariants()</code> runs at two moments only: when a root finishes one
+          of its own commands, and when something tries to persist it. Going around the root
+          triggers neither, which is exactly why the damage is quiet.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="pg-columns">
+    <!-- ── Play ──────────────────────────────────────────────────────────── -->
+    <div class="pg-column">
+      <p class="pg-column-label"><span class="pg-dot pg-dot-do"></span>Do something</p>
+
+      <section class="pg-panel">
+        <h4 class="pg-panel-title">The shelf</h4>
+        <p class="pg-panel-note">
+          Click a copy to open the commands its status allows. Which commands those are
+          comes from <code>LEGAL_TRANSITIONS</code>, not from a list typed into this page.
+        </p>
+        <ul class="pg-copies" data-copies></ul>
+      </section>
+    </div>
+
+    <!-- ── Observe ───────────────────────────────────────────────────────── -->
+    <div class="pg-column pg-column-observe">
+      <p class="pg-column-label"><span class="pg-dot pg-dot-watch"></span>Watch what happens</p>
+
+      <p class="pg-outcome" data-outcome></p>
+
+      <section class="pg-panel pg-events-panel">
+        <h4 class="pg-panel-title">
+          Published events <span class="pg-event-count" data-event-count></span>
+        </h4>
+        <p class="pg-panel-note">
+          Oldest first, grouped by the command that caused them — the same order the scenario
+          scripts print. A <code>UnitOfWork</code> publishes only after a successful save.
+        </p>
+        <ol class="pg-events" data-events></ol>
+      </section>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  /* ── Tokens ─────────────────────────────────────────────────────────────── */
+
+  .playground {
+    /* Status colours. Saturated on purpose — here the colour is the data. */
+    --pg-available: #34d399;
+    --pg-onloan: #60a5fa;
+    --pg-damaged: #fbbf24;
+    --pg-lost: #f87171;
+    --pg-withdrawn: #94a3b8;
+
+    /* Bounded contexts, for the event log. */
+    --pg-ctx-inventory: #2dd4bf;
+    --pg-ctx-lending: #818cf8;
+    --pg-ctx-membership: #e879f9;
+    --pg-ctx-catalog: #fbbf24;
+    --pg-ctx-other: #94a3b8;
+
+    --pg-good: #34d399;
+    --pg-warn: #fbbf24;
+    --pg-bad: #f87171;
+
+    --pg-surface: #14181f;
+    --pg-surface-2: #0d1015;
+    --pg-raised: #1b212a;
+    --pg-line: #29313c;
+    --pg-line-soft: #1f2630;
+    --pg-text: #e7edf4;
+    --pg-text-dim: #93a1b1;
+    --pg-text-faint: #6b7887;
+
+    --pg-radius: 0.5rem;
+  }
+
+  :root[data-theme='light'] .playground {
+    --pg-available: #059669;
+    --pg-onloan: #2563eb;
+    --pg-damaged: #b45309;
+    --pg-lost: #dc2626;
+    --pg-withdrawn: #64748b;
+
+    --pg-ctx-inventory: #0d9488;
+    --pg-ctx-lending: #4f46e5;
+    --pg-ctx-membership: #a21caf;
+    --pg-ctx-catalog: #b45309;
+    --pg-ctx-other: #64748b;
+
+    --pg-good: #059669;
+    --pg-warn: #b45309;
+    --pg-bad: #dc2626;
+
+    --pg-surface: #f7f9fb;
+    --pg-surface-2: #ffffff;
+    --pg-raised: #ffffff;
+    --pg-line: #d8e0e9;
+    --pg-line-soft: #e8edf3;
+    --pg-text: #15191f;
+    --pg-text-dim: #566372;
+    --pg-text-faint: #7d8996;
+  }
+
+  /* ── Shell ──────────────────────────────────────────────────────────────── */
+
+  .playground {
+    margin: 2rem 0;
+    border: 1px solid var(--pg-line);
+    border-radius: 0.75rem;
+    padding: 1.1rem;
+    background: var(--pg-surface);
+    color: var(--pg-text);
+    font-size: 0.875rem;
+  }
+
+  /* ── Header ─────────────────────────────────────────────────────────────── */
+
+  .pg-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: 0.9rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--pg-line-soft);
+  }
+
+  @media (min-width: 60rem) {
+    .pg-header {
+      grid-template-columns: 1fr auto;
+      gap: 1.5rem;
+    }
+    .pg-header-right {
+      justify-self: end;
+    }
+  }
+
+  .pg-header-commands {
+    margin-top: 0.7rem;
+  }
+
+  .pg-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .playground .pg-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-style: italic;
+    letter-spacing: -0.01em;
+    color: var(--pg-text);
+  }
+
+  .pg-subtitle {
+    margin: 0.15rem 0 0;
+    font-size: 0.75rem;
+    color: var(--pg-text-faint);
+  }
+
+  .playground .pg-subtitle code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.95em;
+    color: var(--pg-text-dim);
+  }
+
+  .pg-stats {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .pg-stat {
+    /* Wide enough for the longest label ("on record") so all three come out the
+       same width — a row of stats that disagree on width reads as a bug. */
+    min-width: 6.25rem;
+    border: 1px solid var(--pg-line);
+    border-radius: var(--pg-radius);
+    padding: 0.4rem 0.7rem;
+    background: var(--pg-surface-2);
+    text-align: center;
+  }
+
+  .pg-stat-value {
+    display: block;
+    font-family: var(--__sl-font-mono, monospace);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--pg-text);
+  }
+
+  .pg-stat-label {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--pg-text-faint);
+  }
+
+  .pg-stat[data-tone='bad'] {
+    border-color: var(--pg-bad);
+    background: color-mix(in srgb, var(--pg-bad) 12%, transparent);
+  }
+
+  .pg-stat[data-tone='bad'] .pg-stat-value {
+    color: var(--pg-bad);
+  }
+
+  /* Sized to sit in the row as a fourth block rather than a footnote beside it:
+     `stretch` takes its height from the stats instead of hard-coding one, so it
+     stays matched if the numbers ever change size, and the `min-width` is the
+     same 6.25rem the stats use.
+
+     Amber because reset is destructive-but-recoverable — it throws away the
+     state you built, and the reader should see it coming rather than find it. */
+  .pg-reset {
+    align-self: stretch;
+    min-width: 6.25rem;
+    border: 1px solid color-mix(in srgb, var(--pg-warn) 55%, transparent);
+    border-radius: var(--pg-radius);
+    padding: 0.4rem 0.85rem;
+    background: color-mix(in srgb, var(--pg-warn) 16%, transparent);
+    color: var(--pg-warn);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .pg-reset:hover {
+    border-color: var(--pg-warn);
+    background: color-mix(in srgb, var(--pg-warn) 26%, transparent);
+  }
+
+  /* ── Columns ────────────────────────────────────────────────────────────── */
+
+  .pg-columns {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 60rem) {
+    .pg-columns {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  .pg-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    min-width: 0;
+  }
+
+  .pg-column-label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--pg-text-faint);
+  }
+
+  .pg-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+  }
+
+  .pg-dot-do {
+    background: var(--pg-onloan);
+  }
+
+  .pg-dot-watch {
+    background: var(--pg-ctx-inventory);
+  }
+
+  .pg-panel {
+    border: 1px solid var(--pg-line);
+    border-radius: var(--pg-radius);
+    padding: 0.9rem;
+    background: var(--pg-surface-2);
+    min-width: 0;
+  }
+
+  .playground .pg-panel-title {
+    margin: 0 0 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--pg-text-faint);
+  }
+
+  .pg-panel-note {
+    margin: -0.4rem 0 0.8rem;
+    font-size: 0.74rem;
+    line-height: 1.6;
+    color: var(--pg-text-dim);
+  }
+
+  .playground .pg-panel-note code,
+  .playground .pg-break-why code,
+  .playground .pg-break-what code {
+    background: var(--pg-raised);
+    border: 1px solid var(--pg-line-soft);
+    border-radius: 0.25rem;
+    padding: 0.05em 0.3em;
+    font-size: 0.88em;
+    color: var(--pg-text);
+  }
+
+  /* ── The shelf ──────────────────────────────────────────────────────────── */
+
+  .playground ul.pg-copies {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  li.pg-copy {
+    --pg-status-colour: var(--pg-withdrawn);
+  }
+  li.pg-copy[data-status='Available'] {
+    --pg-status-colour: var(--pg-available);
+  }
+  li.pg-copy[data-status='OnLoan'] {
+    --pg-status-colour: var(--pg-onloan);
+  }
+  li.pg-copy[data-status='Damaged'] {
+    --pg-status-colour: var(--pg-damaged);
+  }
+  li.pg-copy[data-status='Lost'] {
+    --pg-status-colour: var(--pg-lost);
+  }
+
+  .pg-copy-button {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    align-items: center;
+    gap: 0.7rem;
+    border: 1px solid var(--pg-line);
+    border-left: 4px solid var(--pg-status-colour);
+    border-radius: var(--pg-radius);
+    padding: 0.6rem 0.75rem;
+    background: var(--pg-raised);
+    color: var(--pg-text);
+    cursor: pointer;
+    text-align: left;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease;
+  }
+
+  .pg-copy-button:hover {
+    border-color: var(--pg-status-colour);
+    border-left-color: var(--pg-status-colour);
+    background: color-mix(in srgb, var(--pg-status-colour) 7%, var(--pg-raised));
+  }
+
+  /* The row no longer nudges sideways on hover: it now has a panel hanging off
+     its bottom edge, and sliding only the header would tear the two apart. */
+  li.pg-copy[data-selected='true'] .pg-copy-button {
+    border-color: var(--pg-status-colour);
+    background: color-mix(in srgb, var(--pg-status-colour) 10%, var(--pg-raised));
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .pg-chevron {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid var(--pg-text-faint);
+    border-bottom: 2px solid var(--pg-text-faint);
+    transform: rotate(45deg) translate(-0.1rem, -0.1rem);
+    transition: transform 0.15s ease;
+  }
+
+  li.pg-copy[data-selected='true'] .pg-chevron {
+    border-color: var(--pg-status-colour);
+    transform: rotate(-135deg) translate(-0.15rem, -0.15rem);
+  }
+
+  /* ── One copy's commands, opened under its row ──────────────────────────── */
+
+  .pg-copy-detail {
+    border: 1px solid var(--pg-status-colour);
+    border-top: none;
+    border-left-width: 4px;
+    border-radius: 0 0 var(--pg-radius) var(--pg-radius);
+    padding: 0.75rem;
+    background: color-mix(in srgb, var(--pg-status-colour) 5%, var(--pg-surface));
+  }
+
+  .pg-copy-detail .pg-terminal {
+    background: color-mix(in srgb, var(--pg-status-colour) 8%, transparent);
+  }
+
+  li.pg-copy[data-status='Lost'] .pg-copy-button,
+  li.pg-copy[data-status='Withdrawn'] .pg-copy-button {
+    opacity: 0.72;
+  }
+
+  .pg-barcode {
+    font-family: var(--__sl-font-mono, monospace);
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
+  }
+
+  .pg-pill {
+    border: 1px solid color-mix(in srgb, var(--pg-status-colour) 45%, transparent);
+    border-radius: 999px;
+    padding: 0.12rem 0.55rem;
+    background: color-mix(in srgb, var(--pg-status-colour) 16%, transparent);
+    color: var(--pg-status-colour);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  .pg-lent {
+    font-family: var(--__sl-font-mono, monospace);
+    font-size: 0.68rem;
+    color: var(--pg-text-faint);
+  }
+
+  /* ── Commands ───────────────────────────────────────────────────────────── */
+
+  .pg-commands {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .pg-commands:empty {
+    display: none;
+  }
+
+  .playground button.pg-command {
+    border: 1px solid var(--pg-line);
+    border-radius: var(--pg-radius);
+    padding: 0.45rem 0.8rem;
+    background: var(--pg-raised);
+    color: var(--pg-text);
+    font-size: 0.79rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease,
+      transform 0.12s ease;
+  }
+
+  .playground button.pg-command:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: var(--pg-onloan);
+    background: color-mix(in srgb, var(--pg-onloan) 12%, var(--pg-raised));
+  }
+
+  .playground button.pg-command:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .playground button.pg-command.pg-primary {
+    border-color: color-mix(in srgb, var(--pg-onloan) 55%, transparent);
+    background: color-mix(in srgb, var(--pg-onloan) 14%, var(--pg-raised));
+    color: var(--pg-onloan);
+    font-weight: 600;
+  }
+
+  .pg-terminal {
+    margin: 0 0 0.6rem;
+    padding: 0.5rem 0.65rem;
+    border-radius: var(--pg-radius);
+    background: var(--pg-surface);
+    font-size: 0.74rem;
+    line-height: 1.6;
+    color: var(--pg-text-dim);
+  }
+
+  /* ── Ghost transitions ──────────────────────────────────────────────────── */
+
+  .pg-ghosts {
+    margin-top: 0.8rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .pg-ghost {
+    border: 1px dashed var(--pg-line);
+    border-radius: var(--pg-radius);
+    padding: 0.28rem 0.55rem;
+    font-family: var(--__sl-font-mono, monospace);
+    font-size: 0.7rem;
+    color: var(--pg-text-faint);
+    cursor: help;
+  }
+
+  .pg-ghost:hover {
+    border-color: var(--pg-text-faint);
+    color: var(--pg-text-dim);
+  }
+
+  .pg-ghost-caption {
+    flex-basis: 100%;
+    margin: 0.25rem 0 0;
+    font-size: 0.7rem;
+    line-height: 1.6;
+    color: var(--pg-text-faint);
+  }
+
+  /* ── The break zone ─────────────────────────────────────────────────────── */
+
+  /* The rule above it is the header's own `border-bottom` — drawing a second
+     one here would stack two lines a millimetre apart. Only the closing rule is
+     this element's to draw. */
+  .pg-break-band {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--pg-line-soft);
+  }
+
+  .pg-break-zone {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+    padding: 1rem 1.1rem;
+    border: 1px dashed color-mix(in srgb, var(--pg-bad) 45%, transparent);
+    border-radius: var(--pg-radius);
+    background: color-mix(in srgb, var(--pg-bad) 6%, transparent);
+  }
+
+  /* Full width would otherwise mean 1000px-wide lines of prose. Two halves at
+     roughly measure: the act on the left, how to watch it on the right. */
+  @media (min-width: 60rem) {
+    .pg-break-zone {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 1.75rem;
+    }
+  }
+
+  .pg-break-half + .pg-break-half {
+    padding-top: 1rem;
+    border-top: 1px dashed color-mix(in srgb, var(--pg-bad) 30%, transparent);
+  }
+
+  @media (min-width: 60rem) {
+    .pg-break-half + .pg-break-half {
+      padding-top: 0;
+      border-top: none;
+      padding-inline-start: 1.75rem;
+      border-inline-start: 1px dashed color-mix(in srgb, var(--pg-bad) 30%, transparent);
+    }
+  }
+
+  .playground .pg-break-title {
+    margin: 0 0 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--pg-bad);
+  }
+
+  .pg-break-what {
+    margin: 0 0 0.7rem;
+    font-size: 0.75rem;
+    line-height: 1.65;
+    color: var(--pg-text-dim);
+  }
+
+  .playground button.pg-command.pg-break {
+    border-color: color-mix(in srgb, var(--pg-bad) 55%, transparent);
+    background: color-mix(in srgb, var(--pg-bad) 14%, transparent);
+    color: var(--pg-bad);
+    font-weight: 600;
+  }
+
+  .playground button.pg-command.pg-break:hover:not(:disabled) {
+    border-color: var(--pg-bad);
+    background: color-mix(in srgb, var(--pg-bad) 22%, transparent);
+  }
+
+  .pg-break-expect {
+    margin: 0.7rem 0 0;
+    font-size: 0.73rem;
+    line-height: 1.65;
+    color: var(--pg-text-faint);
+  }
+
+  .pg-break-expect strong {
+    color: var(--pg-text-dim);
+  }
+
+  .playground .pg-break-expect code {
+    font-size: 0.9em;
+    color: var(--pg-text-dim);
+  }
+
+  /* The divider that used to live on this heading moved to
+     `.pg-break-half + .pg-break-half`, which knows whether the halves are
+     stacked or side by side and can draw the rule on the right edge. */
+  .playground .pg-break-how {
+    margin: 0 0 0.7rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--pg-text-faint);
+  }
+
+  .playground ol.pg-steps {
+    counter-reset: pg-step;
+    list-style: none;
+    margin: 0 0 0.9rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .playground ol.pg-steps li {
+    counter-increment: pg-step;
+    position: relative;
+    margin: 0;
+    padding-inline-start: 2rem;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--pg-text-dim);
+  }
+
+  /* Red rather than blue: the markers now sit inside the break zone, and a
+     stray accent colour in here would read as a separate feature rather than
+     the second half of the same one. */
+  .playground ol.pg-steps li::before {
+    content: counter(pg-step);
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    display: grid;
+    place-items: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    border: 1px solid color-mix(in srgb, var(--pg-bad) 45%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--pg-bad) 16%, transparent);
+    color: var(--pg-bad);
+    font-family: var(--__sl-font-mono, monospace);
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+
+  .playground ol.pg-steps strong {
+    color: var(--pg-text);
+    font-weight: 600;
+  }
+
+  .pg-break-why {
+    margin: 0;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--pg-line-soft);
+    font-size: 0.73rem;
+    line-height: 1.65;
+    color: var(--pg-text-faint);
+  }
+
+  /* ── Outcome ────────────────────────────────────────────────────────────── */
+
+  .pg-outcome:empty {
+    display: none;
+  }
+
+  .pg-outcome {
+    margin: 0;
+    border: 1px solid var(--pg-line);
+    border-left-width: 4px;
+    border-radius: var(--pg-radius);
+    padding: 0.7rem 0.85rem;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    background: var(--pg-surface-2);
+    color: var(--pg-text-dim);
+  }
+
+  .pg-outcome[data-tone='accepted'] {
+    border-left-color: var(--pg-good);
+    background: color-mix(in srgb, var(--pg-good) 8%, var(--pg-surface-2));
+  }
+  .pg-outcome[data-tone='refused'] {
+    border-left-color: var(--pg-warn);
+    background: color-mix(in srgb, var(--pg-warn) 8%, var(--pg-surface-2));
+  }
+  .pg-outcome[data-tone='broken'] {
+    border-left-color: var(--pg-bad);
+    background: color-mix(in srgb, var(--pg-bad) 9%, var(--pg-surface-2));
+    color: var(--pg-bad);
+  }
+
+  /* ── Events ─────────────────────────────────────────────────────────────── */
+
+  .pg-events-panel {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pg-event-count {
+    font-family: var(--__sl-font-mono, monospace);
+    font-weight: 500;
+    color: var(--pg-text-dim);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* No inner scroll box: the log grows and the page scrolls, so it reads as one
+     transcript — the same shape as the terminal scenarios this page mirrors.
+
+     A fixed-height box with its own scrollbar quietly reframes the history as a
+     feed you dip into, and it puts the reader in the position of hunting for
+     the moment something happened. Here the order of events *is* the lesson —
+     three lends and only the third announcing that stock ran out — so the whole
+     sequence has to be readable at once, without a second scroll to manage. */
+  .playground ol.pg-events {
+    list-style: none;
+    counter-reset: pg-command;
+    margin: 0;
+    padding: 0;
+    font-size: 0.75rem;
+  }
+
+  .pg-event-command {
+    margin-top: 0.7rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.3rem;
+    background: var(--pg-surface);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pg-text-dim);
+  }
+
+  .pg-event-command:first-child {
+    margin-top: 0;
+  }
+
+  /* Numbered in CSS rather than in the script, because the number is the
+     position in the list and nothing else — deriving it from `commandId` would
+     skip whenever a command published nothing (a refused save, or reaching past
+     the root), and a gap in a numbered list reads as a rendering fault rather
+     than as the meaningful silence it would be. */
+  .pg-event-command::before {
+    counter-increment: pg-command;
+    content: counter(pg-command) '. ';
+    font-family: var(--__sl-font-mono, monospace);
+    color: var(--pg-text-faint);
+  }
+
+  .pg-event {
+    --pg-ctx: var(--pg-ctx-other);
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0.35rem 0 0 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-left: 2px solid color-mix(in srgb, var(--pg-ctx) 55%, transparent);
+    border-radius: 0 0.3rem 0.3rem 0;
+    background: color-mix(in srgb, var(--pg-ctx) 7%, transparent);
+  }
+
+  .pg-event[data-context='inventory'] {
+    --pg-ctx: var(--pg-ctx-inventory);
+  }
+  .pg-event[data-context='lending'] {
+    --pg-ctx: var(--pg-ctx-lending);
+  }
+  .pg-event[data-context='membership'] {
+    --pg-ctx: var(--pg-ctx-membership);
+  }
+  .pg-event[data-context='catalog'] {
+    --pg-ctx: var(--pg-ctx-catalog);
+  }
+
+  .playground code.pg-event-name {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.73rem;
+    font-weight: 600;
+    color: var(--pg-ctx);
+  }
+
+  .pg-event-description {
+    font-family: var(--__sl-font-mono, monospace);
+    font-size: 0.69rem;
+    color: var(--pg-text-faint);
+  }
+
+  .pg-event-empty {
+    padding: 0.5rem 0;
+    line-height: 1.65;
+    color: var(--pg-text-faint);
+  }
+
+  /* ── Narrow screens ─────────────────────────────────────────────────────── */
+
+  @media (max-width: 40rem) {
+    .playground {
+      padding: 0.8rem;
+    }
+    .pg-header-right {
+      width: 100%;
+    }
+    .pg-stats {
+      flex: 1;
+    }
+    .pg-stat {
+      flex: 1;
+      min-width: 0;
+    }
+    .pg-copy-button {
+      grid-template-columns: 1fr auto auto;
+    }
+    .pg-lent {
+      display: none;
+    }
+  }
+</style>

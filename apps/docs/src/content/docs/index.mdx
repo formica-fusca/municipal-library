@@ -1,0 +1,163 @@
+---
+# Used for the browser tab and search results. The hero below carries the name,
+# so repeating it here would render as "Municipal Library | Municipal Library"
+# in every tab.
+title: Domain-Driven Design, demonstrated
+description: An educational showcase of Domain-Driven Design, built around a public library that lends physical books — and a small shop annex that sells them.
+template: splash
+hero:
+  title: Municipal Library
+  tagline: |
+    An educational showcase of Domain-Driven Design, built around a public
+    library that lends physical books — and a small shop annex that sells them.
+    No web server, no database, no framework: every idea is demonstrated by a
+    runnable script and pinned by a test.
+  actions:
+    - text: See the docs
+      link: /concepts/01-entity/
+      icon: open-book
+      variant: primary
+    - text: Try the playground
+      link: /playground/
+      icon: puzzle
+      variant: secondary
+---
+
+import {
+  Card,
+  CardGrid,
+  Steps,
+  Tabs,
+  TabItem,
+} from "@astrojs/starlight/components";
+import Mermaid from "../../components/Mermaid.astro";
+
+## Why a library?
+
+The target modelled business was about _book reservation, stocks and inventory management_. A lending
+library is the sharpest version of that problem, because it forces a distinction
+most inventory systems get to avoid: _the library must know **which copy** you have at home_.
+
+A bookshop does not. A customer buying _Dune_ does not care which of the four
+boxed copies they receive, and the shop has no reason to track it. That single
+difference produces two completely different models of the word "stock" — and
+that contrast is the spine of this repository.
+
+<CardGrid>
+  <Card title="The library" icon="open-book">
+    Stock is a **set of identified volumes**. `BookStock` is an aggregate root
+    holding `Copy` child entities, each with its own barcode and its own
+    lifecycle: lent, damaged, repaired, lost, withdrawn.
+  </Card>
+  <Card title="The shop annex" icon="seti:shell">
+    Stock is **two integers**. `StockItem` has no children at all, because
+    nobody ever asks which unit they bought. Deliberately anaemic — by correct
+    modelling, not by accident.
+  </Card>
+</CardGrid>
+
+## The context map
+
+<Mermaid
+  caption="Dotted arrows are domain events. Thick arrows are ports that Lending declares and the composition root implements."
+  chart={`
+flowchart TB
+    subgraph SK["shared kernel"]
+        direction LR
+        K["Isbn · Money · TitleId · CopyId · MemberId"]
+    end
+
+    subgraph LIB["The library"]
+        CAT["<b>Catalogue</b><br/>Title"]
+        INV["<b>Inventory</b><br/>BookStock ─ Copy*"]
+        LEND["<b>Lending</b><br/>Loan · HoldQueue ─ HoldRequest*"]
+        MEM["<b>Membership</b><br/>Member"]
+    end
+
+    subgraph SHOP["The shop annex"]
+        SI["<b>Shop Inventory</b><br/>StockItem"]
+    end
+
+    INV -. "title-became-available" .-> LEND
+    LEND -. "loan-opened / loan-closed" .-> MEM
+    LEND == "ShelfGateway (port)" ==> INV
+    LEND == "BorrowerDirectory (port)" ==> MEM
+
+    CAT --- K
+    INV --- K
+    LEND --- K
+    MEM --- K
+    SI --- K
+
+`}
+/>
+
+`*` marks a **child entity**, living inside its aggregate root's boundary.
+
+There are no other connections. No bounded context imports another, and `tsc -b`
+enforces it — the contexts do not list each other as dependencies, so an import
+would not even resolve.
+
+## Quick start
+
+<Steps>
+
+1. Install and build.
+
+   ```bash
+   pnpm install
+   ```
+
+2. Run the six narrated walkthroughs.
+
+   ```bash
+   pnpm scenarios
+   ```
+
+   Or one at a time — `pnpm scenario:5` is the one that answers the
+   entity-emits-events question.
+
+3. Run the tests. Every documented invariant has one.
+
+   ```bash
+   pnpm test
+   ```
+
+</Steps>
+
+## Where to go next
+
+<CardGrid>
+  <Card title="The concepts" icon="document">
+    Seven documents, written to be read in order but each standing alone:
+    [Entity](/concepts/01-entity/), [Aggregate
+    Root](/concepts/02-aggregate-root/), [the difference between
+    them](/concepts/03-entity-vs-aggregate/),
+    [Invariants](/concepts/04-invariants/), [Domain
+    events](/concepts/05-domain-events/), [Two models of
+    stock](/concepts/06-two-models-of-stock/), and
+    [Architecture](/concepts/07-architecture/).
+  </Card>
+  <Card title="The scenarios" icon="rocket">
+    The real console output of each runnable script, captured on every build so
+    it cannot drift from the code. Start with [invariants under
+    attack](/scenarios/04-invariants-under-attack/), which breaks an aggregate
+    on purpose.
+  </Card>
+  <Card title="Reference" icon="list-format">
+    [The aggregates at a glance](/reference/aggregates/), [the ubiquitous
+    language](/reference/ubiquitous-language/), and [a map of the
+    repository](/reference/repository-map/).
+  </Card>
+  <Card title="The playground" icon="puzzle">
+    [Drive the real `BookStock` aggregate](/playground/) in your browser — the
+    same class the tests pin, wired by the same composition root. Lend copies,
+    watch events fire on availability *edges*, then break the boundary on
+    purpose and see how long the damage stays invisible.
+  </Card>
+  <Card title="Two calls left to you" icon="pencil">
+    The [hold allocation policy](/reference/your-call/) and what happens when a
+    race pushes a member past their borrowing allowance. Both ship with working
+    defaults and documented alternatives.
+  </Card>
+</CardGrid>

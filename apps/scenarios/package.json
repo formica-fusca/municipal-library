@@ -1,0 +1,21 @@
+{
+  "name": "@local/scenarios",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Runnable narrated walkthroughs. The composition root of the whole showcase.",
+  "dependencies": {
+    "@local/bookshop-inventory": "workspace:*",
+    "@local/composition": "workspace:*",
+    "@local/ddd-core": "workspace:*",
+    "@local/event-bus": "workspace:*",
+    "@local/library-catalog": "workspace:*",
+    "@local/library-inventory": "workspace:*",
+    "@local/library-lending": "workspace:*",
+    "@local/library-membership": "workspace:*",
+    "@local/shared-kernel": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

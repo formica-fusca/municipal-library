@@ -1,0 +1,7 @@
+# Astro build output and cache
+dist/
+.astro/
+
+# Scenario transcripts are captured from the real scripts on every build.
+# Checking them in would let them drift from what the code actually prints.
+src/content/docs/scenarios/

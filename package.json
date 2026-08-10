@@ -1,0 +1,33 @@
+{
+  "name": "municipal-library",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An educational showcase of Domain-Driven Design, modelled on a public library and its bookshop annex.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean && rm -rf packages/*/dist packages/*/*/dist apps/*/dist",
+    "test": "tsc -b && vitest run",
+    "test:watch": "vitest",
+    "scenario:1": "pnpm build && tsx apps/scenarios/src/01-acquire-and-shelve.ts",
+    "scenario:2": "pnpm build && tsx apps/scenarios/src/02-borrow-and-return.ts",
+    "scenario:3": "pnpm build && tsx apps/scenarios/src/03-hold-queue.ts",
+    "scenario:4": "pnpm build && tsx apps/scenarios/src/04-invariants-under-attack.ts",
+    "scenario:5": "pnpm build && tsx apps/scenarios/src/05-can-an-entity-emit-an-event.ts",
+    "scenario:6": "pnpm build && tsx apps/scenarios/src/06-two-models-of-stock.ts",
+    "scenarios": "pnpm build && tsx apps/scenarios/src/run-all.ts",
+    "docs:dev": "pnpm --filter @local/docs dev",
+    "docs:build": "pnpm --filter @local/docs build",
+    "docs:preview": "pnpm --filter @local/docs preview",
+    "docs:check": "pnpm --filter @local/docs check"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

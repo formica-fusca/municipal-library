@@ -1,0 +1,149 @@
+/*
+ * A restrained palette. The documents are dense and argumentative; the design's
+ * only job is to stay out of the way and make the tables and code blocks legible.
+ */
+
+:root {
+  /* A muted library green — enough personality to feel deliberate, not enough
+     to compete with the syntax highlighting. */
+  --sl-color-accent-low: #16281d;
+  --sl-color-accent: #3f7a56;
+  --sl-color-accent-high: #b6dcc4;
+
+  --site-rule: var(--sl-color-gray-5);
+  --site-transcript-bg: #10161c;
+  --site-transcript-fg: #c8d3de;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #d6ece0;
+  --sl-color-accent: #2f6444;
+  --sl-color-accent-high: #1b3c28;
+
+  --site-rule: var(--sl-color-gray-5);
+}
+
+/* ── Mermaid ──────────────────────────────────────────────────────────────── */
+
+.mermaid-figure {
+  margin: 1.75rem 0;
+  /* Wide diagrams scroll inside their own box; the page body never does. */
+  overflow-x: auto;
+}
+
+pre.mermaid {
+  /* Before rendering this holds the raw diagram source. Hiding it avoids a
+     flash of unstyled graph definition on first paint. */
+  visibility: hidden;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  text-align: center;
+  min-height: 4rem;
+  /* The element is a <pre>, but its rendered contents are a diagram. Leaving it
+     monospace would fight the font mermaid measured the label boxes against. */
+  font-family: inherit;
+  white-space: normal;
+}
+
+pre.mermaid[data-rendered='true'] {
+  visibility: visible;
+}
+
+/* If a diagram fails to parse, show the source rather than a blank space —
+   an invisible failure is worse than an ugly one. */
+pre.mermaid[data-rendered='failed'] {
+  visibility: visible;
+  text-align: left;
+  padding: 1rem;
+  background: var(--sl-color-gray-6);
+  border-left: 3px solid var(--sl-color-red);
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+}
+
+pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── Scenario transcripts ─────────────────────────────────────────────────── */
+
+.transcript pre {
+  background: var(--site-transcript-bg) !important;
+  color: var(--site-transcript-fg);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  max-height: 40rem;
+  overflow: auto;
+}
+
+/* ── The playground page ──────────────────────────────────────────────────── */
+
+/*
+ * The playground uses the `splash` template so the console can have the full
+ * width — three panels and an event log do not fit a column sized for prose.
+ *
+ * The prose on that page is still prose, though, and the same change took it to
+ * roughly 135 characters a line — about twice a comfortable measure. So cap
+ * everything except the console itself.
+ *
+ * 45rem is not a taste call: `splash` widens `--sl-content-width` from 45rem to
+ * 67.5rem, and this puts the text back to the width every other page in the
+ * site already uses. Paragraphs measure the same here as in the concept
+ * documents; only the console gets the extra room.
+ *
+ * Capped rather than centred: the page title sits flush left, and centring the
+ * paragraphs under a left-aligned heading would look like a mistake.
+ */
+.sl-markdown-content:has(> .playground) > *:not(.playground) {
+  max-width: 45rem;
+}
+
+/* ── Tables ───────────────────────────────────────────────────────────────── */
+
+/*
+ * Several documents lean on comparison tables to carry the argument, so they
+ * need to be readable rather than merely present.
+ */
+.sl-markdown-content table {
+  display: block;
+  overflow-x: auto;
+  font-size: 0.9rem;
+}
+
+.sl-markdown-content th {
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.sl-markdown-content td {
+  vertical-align: top;
+}
+
+/* ── Blockquotes ──────────────────────────────────────────────────────────── */
+
+/*
+ * Every concept document opens with a one-sentence definition in a blockquote.
+ * It is the thesis of the page, and deserves to read as one.
+ */
+.sl-markdown-content > blockquote:first-of-type {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  border-inline-start-width: 3px;
+  border-inline-start-color: var(--sl-color-accent);
+  color: var(--sl-color-white);
+}
+
+/* ── Misc ─────────────────────────────────────────────────────────────────── */
+
+.sl-markdown-content hr {
+  border-color: var(--site-rule);
+  opacity: 0.6;
+}
+
+/* Inline code inside headings shouldn't shout. */
+.sl-markdown-content :is(h2, h3, h4) code {
+  font-size: 0.9em;
+}

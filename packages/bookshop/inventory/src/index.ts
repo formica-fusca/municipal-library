@@ -1,0 +1,7 @@
+export { ShopCounter, UnknownProduct } from './application/shop-counter.js'
+export { ShelfEmptied, StockReceived, StockReserved, StockSold } from './domain/events.js'
+export { ProductId } from './domain/identities.js'
+export type { StockItemRepository } from './domain/stock-item-repository.js'
+export { NotEnoughStock, StockItem } from './domain/stock-item.js'
+export type { StockItemSnapshot } from './domain/stock-item.js'
+export { InMemoryStockItemRepository } from './infrastructure/in-memory-stock-item-repository.js'

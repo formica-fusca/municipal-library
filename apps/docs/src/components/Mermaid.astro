@@ -1,0 +1,37 @@
+---
+/**
+ * A Mermaid diagram, for use from `.mdx` pages.
+ *
+ * Markdown files get their ```mermaid fences rewritten by
+ * `src/plugins/remark-mermaid.mjs`. MDX cannot use that path: MDX v3 parses the
+ * document as JSX, so a remark plugin emitting a raw `html` node produces
+ * either an error or literal text. Passing the diagram source as a prop
+ * sidesteps the question entirely — and Astro escapes the interpolation, so the
+ * `<b>` and `<br/>` inside node labels survive as characters rather than being
+ * parsed into elements the client would then read back without them.
+ *
+ * Both routes end at the same `<pre class="mermaid">`, which
+ * `src/scripts/mermaid.ts` renders.
+ */
+interface Props {
+  chart: string
+  /** Optional caption rendered beneath the diagram. */
+  caption?: string
+}
+
+const { chart, caption } = Astro.props
+---
+
+<figure class="mermaid-figure">
+  <pre class="mermaid">{chart.trim()}</pre>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  figcaption {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+    margin-top: 0.5rem;
+  }
+</style>

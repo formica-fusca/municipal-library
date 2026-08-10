@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist",
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["dist"],
+  "references": [
+    { "path": "../packages/ddd-core" },
+    { "path": "../packages/shared-kernel" },
+    { "path": "../packages/event-bus" },
+    { "path": "../packages/library/catalog" },
+    { "path": "../packages/library/inventory" },
+    { "path": "../packages/library/membership" },
+    { "path": "../packages/library/lending" },
+    { "path": "../packages/bookshop/inventory" }
+  ]
+}

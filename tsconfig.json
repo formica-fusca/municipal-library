@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "files": [],
+  "references": [
+    { "path": "packages/ddd-core" },
+    { "path": "packages/shared-kernel" },
+    { "path": "packages/event-bus" },
+    { "path": "packages/library/catalog" },
+    { "path": "packages/library/inventory" },
+    { "path": "packages/library/membership" },
+    { "path": "packages/library/lending" },
+    { "path": "packages/bookshop/inventory" },
+    { "path": "packages/composition" },
+    { "path": "apps/scenarios" },
+    { "path": "tests" }
+  ]
+}

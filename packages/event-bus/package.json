@@ -1,0 +1,19 @@
+{
+  "name": "@local/event-bus",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A deliberately tiny in-process publish/subscribe bus, plus the unit of work that dispatches after commit.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@local/ddd-core": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

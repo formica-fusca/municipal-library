@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../../packages/composition" },
+    { "path": "../../packages/ddd-core" },
+    { "path": "../../packages/shared-kernel" },
+    { "path": "../../packages/event-bus" },
+    { "path": "../../packages/library/catalog" },
+    { "path": "../../packages/library/inventory" },
+    { "path": "../../packages/library/membership" },
+    { "path": "../../packages/library/lending" },
+    { "path": "../../packages/bookshop/inventory" }
+  ]
+}

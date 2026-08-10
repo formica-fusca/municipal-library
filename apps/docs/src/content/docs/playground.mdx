@@ -1,0 +1,172 @@
+---
+title: Playground
+description: Drive a real BookStock aggregate in your browser — publish events, watch invariants, and break the boundary on purpose.
+
+# `splash` drops the navigation sidebar (`hasSidebar: template !== 'splash'` in
+# Starlight's page utils) and `tableOfContents: false` drops the right-hand one.
+# The console wants the width: three panels plus an event log do not fit into a
+# column sized for prose. The page is a tool, not a document — and it is reached
+# from the header rather than from a reading order, so there is no position in a
+# sidebar for it to lose.
+template: splash
+tableOfContents: false
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Playground from "../../components/Playground.astro";
+
+The library below stocks **one title** — *Dune* — in **three physical copies**,
+barcoded `LIB-000101` to `LIB-000103`. That is the entire world: a single
+`BookStock` aggregate root with three `Copy` entities living inside its
+boundary. One book is enough, because everything worth showing here happens
+between a root and its own children.
+
+Everything is the actual model. Nothing is reimplemented for the browser.
+
+<Playground />
+
+## The three numbers in the header
+
+They answer three different questions, and they are only equal before anything
+has happened.
+
+|                    |                                                                                                                                                                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **on record**      | Every `Copy` ever acquired, **including lost and withdrawn ones**. A terminal status removes the volume from the library, never the record from the aggregate — otherwise nothing could answer "what happened to `LIB-000102`?" |
+| **held**           | Volumes the library still physically has, wherever they are: on a shelf, in a member's hands, in the repair box. Derived from the copies, not stored.                                                                           |
+| **available**      | Volumes a member could borrow _right now_. This is `availableCount`, the aggregate's own stored counter — and therefore the one that can drift.                                                                                    |
+
+Lose a copy and the first stays put while the other two fall. That is the
+audit trail and the inventory disagreeing on purpose.
+
+## Three things worth doing
+
+**Lend the copies one at a time, and watch the event list.** Three copies means
+three `copy-checked-out` events — but only _one_ `title-out-of-stock`, on the
+third. Availability events fire on the **edges**, when the answer to "can
+somebody borrow this?" actually changes, not on every decrement. Lend the first
+copy and nothing about availability is announced, because nothing about it
+changed. Return one and a single `title-became-available` appears, for the same
+reason in reverse.
+
+That last event is the one Lending subscribes to. Here the hold queue is empty,
+so the subscriber runs and finds nothing to do; in
+[scenario 3](/scenarios/03-hold-queue/) it allocates the returned copy to
+whoever is at the front. Inventory is identical in both cases — it announced a
+fact about itself and has no idea anyone is listening.
+
+**Look at what has no button.** The command list is built from
+`LEGAL_TRANSITIONS`, exported by the Inventory context — the page never restates
+a rule. The dashed chips are transitions the model permits that no use case
+exposes. `→ Withdrawn` is a rule waiting for an application service. `→ OnLoan`
+is a deliberate absence: a member borrows a _title_, so no use case anywhere
+accepts "lend me barcode `LIB-000102`". The gap between the transition table and
+the buttons is exactly the application layer.
+
+**Then break it** — the section below explains exactly what that means.
+
+## What "break the aggregate" actually does
+
+`BookStock` keeps its copies in a private `Map`. Nothing outside can reach one:
+`Copy` is not even exported from `@local/library-inventory`. That inaccessibility
+_is_ the aggregate boundary — not a diagram, a missing export.
+
+The reason it matters is a single line in `BookStock`:
+
+```ts
+reportDamaged(copyId: CopyId, reason: string, at: Date): void {
+  const copy = this.#copyOrFail(copyId)
+  const wasOnShelf = copy.isOnShelf
+
+  copy.reportDamaged(reason, at)          // ← the child changes
+  if (wasOnShelf) this.#shiftAvailability(-1, at)   // ← the root keeps up
+
+  this.assertInvariants()
+}
+```
+
+Two things must happen together: the copy's status changes, **and** the root
+decrements the counter it maintains. Only the root can do the second, because
+only the root can see all the copies. A `Copy` cannot know whether it was the
+last one on the shelf.
+
+`unsafeCopyForTeaching()` hands you the live child anyway, so you can call the
+first half without the second:
+
+```ts
+const leaked = stock.unsafeCopyForTeaching(CopyId.of("LIB-000101"));
+leaked.reportDamaged("a caller reached past the root", now);
+// the copy is Damaged. availableCount was not touched. nobody knows.
+```
+
+**So here is what to expect when you press the button**, starting from three
+available copies:
+
+|                                       | before    | after             |
+| ------------------------------------- | --------- | ----------------- |
+| `LIB-000101` status                   | Available | **Damaged**       |
+| `availableCount` (the root's counter) | 3         | **3** — unchanged |
+| copies actually reading Available     | 3         | **2**             |
+| events published                      | —         | **none**          |
+
+Two numbers that must always be equal now differ by one, and nothing announced
+it. Nothing on the page announces it either — you find it by comparing the
+header against the shelf, which is the point.
+
+Nothing is published because nothing saved — `UnitOfWork` announces events only
+after a successful write, and no write was attempted. The corruption is silent
+by construction.
+
+## Why nothing notices
+
+`assertInvariants()` is not ambient validation. Nothing watches the aggregate.
+It runs at exactly two moments:
+
+1. **When the aggregate finishes one of its own commands.** `acquireCopy`,
+   `acceptReturn`, `reportDamaged` and the rest all end by calling it — a root
+   checks itself before considering a command done.
+2. **When something tries to persist it.** `UnitOfWork.commit()` asserts before
+   saving, and `InMemoryRepository.save()` asserts again before storing, so
+   nothing inconsistent can reach storage.
+
+There is no third moment. No watcher, no background validator, no framework
+hook. Which means a corrupt aggregate is discovered only when somebody runs a
+command or tries to save it — and by going *around* the root, you did neither.
+
+**This page deliberately does not help.** There is no invariant panel, no
+status light, no "check now" button. Adding one would make the page cleverer
+than the system it is demonstrating: you would watch something turn red and
+conclude that broken aggregates announce themselves. They do not.
+
+So the shelf goes on looking healthy. The header keeps reporting a number that
+is no longer true. The corrupted stock sits in the repository indistinguishable
+from a sound one — and the first complaint in the entire system comes from the
+next ordinary command, at the moment it tries to write:
+
+```
+invariant "the available count matches the copies on the shelf" violated —
+title TITLE-DUNE claims 3 available, but 2 copies are actually on the shelf
+```
+
+That is where the real system catches it. `InMemoryRepository.save()` calls
+`assertInvariants()` before writing, so nothing inconsistent reaches storage.
+The gap between breaking it and noticing is the whole reason the boundary is
+worth defending: a corrupt aggregate is not loud, it is _quiet_, and it stays
+quiet until something tries to persist it.
+
+<Aside type="caution" title="unsafeCopyForTeaching() is not a pattern">
+  It exists so this page and [scenario
+  4](/scenarios/04-invariants-under-attack/) can break an invariant for real
+  instead of describing one in prose. In production code, handing a child entity
+  across an aggregate boundary is the bug. `Copy` is not exported from
+  `@local/library-inventory` at all — this method is the only way to get one.
+</Aside>
+
+## Where to read next
+
+- [Aggregate Root](/concepts/02-aggregate-root/) — why `BookStock` owns `Copy`,
+  and how big a boundary should be
+- [Invariants](/concepts/04-invariants/) — what is and is not an invariant, and
+  why "a member never exceeds their allowance" is _not_ one
+- [Scenario 4](/scenarios/04-invariants-under-attack/) — the same demolition,
+  narrated, in a terminal

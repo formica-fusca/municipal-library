@@ -1,0 +1,21 @@
+{
+  "name": "@local/library-catalog",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bounded context: what the library holds as bibliographic records. Knows nothing about physical volumes.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@local/ddd-core": "workspace:*",
+    "@local/event-bus": "workspace:*",
+    "@local/shared-kernel": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

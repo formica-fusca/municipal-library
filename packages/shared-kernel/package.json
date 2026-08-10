@@ -1,0 +1,19 @@
+{
+  "name": "@local/shared-kernel",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The small slice of model that every bounded context agrees on: ISBN, Money, and the reference identities.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@local/ddd-core": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

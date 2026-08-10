@@ -1,0 +1,13 @@
+packages:
+  - 'packages/*'
+  - 'packages/library/*'
+  - 'packages/bookshop/*'
+  - 'apps/*'
+  - 'tests'
+allowBuilds:
+  # esbuild ships a prebuilt native binary; its install script only unpacks it.
+  # tsx and vitest both depend on it, so the scenarios need this.
+  esbuild: true
+  # sharp is Astro's image optimiser; its install script unpacks a prebuilt
+  # libvips binary. Starlight pulls it in.
+  sharp: true

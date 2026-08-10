@@ -1,0 +1,17 @@
+{
+  "name": "@local/tests",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Executable specification of the documented invariants. Tests only the published surface of each context.",
+  "dependencies": {
+    "@local/bookshop-inventory": "workspace:*",
+    "@local/ddd-core": "workspace:*",
+    "@local/event-bus": "workspace:*",
+    "@local/library-catalog": "workspace:*",
+    "@local/library-inventory": "workspace:*",
+    "@local/library-lending": "workspace:*",
+    "@local/library-membership": "workspace:*",
+    "@local/shared-kernel": "workspace:*"
+  }
+}

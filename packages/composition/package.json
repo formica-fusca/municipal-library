@@ -1,0 +1,26 @@
+{
+  "name": "@local/composition",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The composition root: the one place every bounded context is wired together. Runtime-agnostic — a terminal and a browser both consume it.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@local/bookshop-inventory": "workspace:*",
+    "@local/ddd-core": "workspace:*",
+    "@local/event-bus": "workspace:*",
+    "@local/library-catalog": "workspace:*",
+    "@local/library-inventory": "workspace:*",
+    "@local/library-lending": "workspace:*",
+    "@local/library-membership": "workspace:*",
+    "@local/shared-kernel": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

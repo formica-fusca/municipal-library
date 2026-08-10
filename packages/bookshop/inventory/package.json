@@ -1,0 +1,21 @@
+{
+  "name": "@local/bookshop-inventory",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bounded context: the shop annex, where stock is a quantity rather than a set of identified volumes. Exists as a contrast.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@local/ddd-core": "workspace:*",
+    "@local/event-bus": "workspace:*",
+    "@local/shared-kernel": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

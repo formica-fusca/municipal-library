@@ -1,0 +1,110 @@
+---
+/**
+ * The playground link in the top bar.
+ *
+ * ## Why this overrides `SocialIcons` of all things
+ *
+ * Starlight has no configuration for top-level navigation links — the header is
+ * site title · search · social icons · theme select, and that is the whole of
+ * it. The supported way to add anything is to override one of those slots.
+ *
+ * `SocialIcons` is the right one for two reasons. It sits in the header's
+ * right-hand group, which is where a nav link belongs; and `MobileMenuFooter`
+ * *also* renders `SocialIcons`, so this one override appears in both places.
+ * That second point is not a nicety: the header's right group is
+ * `sl-hidden md:sl-flex`, so anything placed there alone would silently
+ * disappear below 50rem — and a primary navigation link that vanishes on a
+ * phone is worse than one in the sidebar.
+ *
+ * Overriding the slot means Starlight's own social links would stop rendering,
+ * so the default component is delegated to below. There are none configured
+ * today; this is here so that adding one later does not quietly do nothing.
+ */
+
+import { Icon } from '@astrojs/starlight/components'
+import Default from '@astrojs/starlight/components/SocialIcons.astro'
+
+const HREF = '/playground/'
+
+// Compare without the trailing slash so the link stays marked as current under
+// either `trailingSlash` setting.
+const normalise = (path: string): string => path.replace(/\/+$/, '')
+const isCurrent = normalise(Astro.url.pathname) === normalise(HREF)
+---
+
+<a href={HREF} class="header-nav-link" aria-current={isCurrent ? 'page' : undefined}>
+  <Icon name="puzzle" size="1.25em" />
+  <span>Playground</span>
+</a>
+
+<Default />
+
+<style>
+  .header-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--sl-color-accent);
+    border-radius: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    background: var(--sl-color-accent);
+    /*
+     * Not `--sl-color-white`, which is a semantic token that flips to near-black
+     * in the light theme. The background here is the same green in both themes,
+     * so the text on it must be the same white in both.
+     */
+    color: #fff;
+    font-size: var(--sl-text-base);
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+    transition:
+      filter 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .header-nav-link:hover {
+    /* Brightness rather than a second colour token: the accent differs between
+       themes, and a hand-picked hover colour would have to differ twice. */
+    filter: brightness(1.14);
+    transform: translateY(-1px);
+  }
+
+  .header-nav-link:active {
+    transform: translateY(0);
+  }
+
+  /*
+   * The page you are on is not somewhere to go. Drop the fill so it reads as a
+   * label rather than a button, and drop the hover affordances with it.
+   */
+  .header-nav-link[aria-current='page'] {
+    background: transparent;
+    color: var(--sl-color-text-accent);
+    box-shadow: none;
+    cursor: default;
+  }
+
+  .header-nav-link[aria-current='page']:hover {
+    filter: none;
+    transform: none;
+  }
+
+  /*
+   * Below 50rem this component is rendered by `MobileMenuFooter` instead of the
+   * header, sharing a row with the theme select. Drop the label there — the
+   * icon plus an accessible name is enough, and the row is tight.
+   */
+  @media (max-width: 30rem) {
+    .header-nav-link span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+</style>
