@@ -1,5 +1,9 @@
 # Municipal Library
 
+**📖 [Read the documentation site](https://formica-fusca.github.io/municipal-library/)**
+ · [the concepts](https://formica-fusca.github.io/municipal-library/concepts/01-entity/)
+ · [the playground](https://formica-fusca.github.io/municipal-library/playground/)
+
 An educational showcase of Domain-Driven Design, built around a public library
 that lends physical books — and a small shop annex that sells them.
 
@@ -10,8 +14,14 @@ doing and why, and pinned by a **test** that fails if the idea stops being true.
 ```bash
 pnpm install
 pnpm scenarios          # run all six walkthroughs
-pnpm test               # 66 tests, all of them about the model
+pnpm test               # 70 tests, all of them about the model
 ```
+
+The site is published from `main` by [`.github/workflows/ci.yml`](.github/workflows/ci.yml),
+which compiles every package, runs the tests and all six scenarios, and only
+then builds and deploys. The scenario transcripts on the site are captured from
+the real scripts during that build, so they are always the output of the commit
+they are published from.
 
 ---
 
@@ -206,7 +216,7 @@ packages/
 apps/
   scenarios/           six narrated scripts — a terminal over the composition
   docs/                Astro + Starlight site — a browser over the same one
-tests/                 66 tests against the published surface of each context
+tests/                 70 tests against the published surface of each context
 docs/                  the concepts, in prose
 ```
 

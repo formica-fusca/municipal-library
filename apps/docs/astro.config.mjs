@@ -2,7 +2,11 @@ import { unified } from '@astrojs/markdown-remark'
 import starlight from '@astrojs/starlight'
 import { defineConfig } from 'astro/config'
 import { fileURLToPath } from 'node:url'
+import rehypeBaseLinks from './src/plugins/rehype-base-links.mjs'
 import remarkMermaid from './src/plugins/remark-mermaid.mjs'
+
+/** Kept in one constant: the config below and the link plugin must agree. */
+const BASE = '/municipal-library'
 
 /**
  * Injects the client-side mermaid renderer into every page.
@@ -42,16 +46,34 @@ const mermaidClient = {
  */
 
 export default defineConfig({
-  // Only used to build absolute URLs in the sitemap. Change it when you know
-  // where this is deployed; nothing else depends on it.
-  site: 'https://municipal-library.example',
+  /*
+   * Deployed to GitHub Pages as a *project* site, which serves from a
+   * subdirectory rather than the domain root:
+   *
+   *   https://formica-fusca.github.io/municipal-library/
+   *   └──────────── site ───────────┘└───── base ──────┘
+   *
+   * `base` is the part that has teeth. Astro prefixes it onto asset URLs and
+   * onto links its own components generate, but *not* onto hrefs written by
+   * hand in Markdown — `/concepts/01-entity/` would resolve against the domain
+   * root and 404. `rehypeBaseLinks` closes that gap; see the plugin for why it
+   * runs over the HTML tree rather than the Markdown one.
+   *
+   * If this ever moves to a custom domain, set `base: '/'` and the plugin
+   * becomes a no-op rather than something to unpick.
+   */
+  site: 'https://formica-fusca.github.io',
+  base: BASE,
 
   markdown: {
     // Astro 7 replaced `markdown.remarkPlugins` with an explicit processor.
     // Starlight's own plugins (asides, heading anchors, …) are appended to
     // whatever is configured here, so this extends the pipeline rather than
     // replacing it.
-    processor: unified({ remarkPlugins: [remarkMermaid] }),
+    processor: unified({
+      remarkPlugins: [remarkMermaid],
+      rehypePlugins: [[rehypeBaseLinks, { base: BASE }]],
+    }),
   },
 
   integrations: [
@@ -70,6 +92,9 @@ export default defineConfig({
       // renders it too, so one override covers desktop and mobile.
       components: {
         SocialIcons: './src/components/HeaderNav.astro',
+        // Only there to base-prefix the landing page's action links, which
+        // Starlight reads from frontmatter and passes through untouched.
+        Hero: './src/components/Hero.astro',
       },
 
       // Every document opens with a definition rather than a preamble, so a

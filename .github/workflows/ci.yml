@@ -1,0 +1,117 @@
+name: CI
+
+# Verify on every push and pull request; publish the documentation site only
+# when `main` moves. Deployment is a job in this workflow rather than a separate
+# file so it can `needs: verify` — a green Pages site should never be able to
+# outrun a red test run.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Lets you redeploy from the Actions tab without an empty commit, which is
+  # handy after changing a Pages setting rather than the code.
+  workflow_dispatch:
+
+# Read-only by default. The two jobs that need more ask for it themselves, so
+# the blast radius of any one step stays visible at the job that owns it.
+permissions:
+  contents: read
+
+concurrency:
+  # Per-ref, so a second push to a branch cancels the first run — except on
+  # `main`, where a cancelled run could interrupt a deployment mid-flight.
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  verify:
+    name: Build, test, run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # No `version:` input — it is read from the `packageManager` field in
+      # package.json, so CI and your machine cannot drift apart silently.
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          # The floor declared in `engines`, not the newest release. Testing the
+          # oldest supported runtime is what makes that declaration mean
+          # anything; a repo that only ever runs on latest does not know whether
+          # its stated minimum is true.
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Four steps rather than one, so a failure names its own cause in the
+      # Actions summary instead of "a script exited 1".
+      - name: Compile every package
+        run: pnpm build
+
+      - name: Tests
+        run: pnpm test
+
+      # Not redundant with the tests: the scenarios exercise the composition
+      # root and the narration, neither of which any test imports. They are also
+      # the thing a reader runs first, so a broken one is a broken front door.
+      - name: Scenarios
+        run: pnpm scenarios
+
+      - name: Documentation types and links
+        run: pnpm docs:check
+
+  build-docs:
+    name: Build the site
+    needs: verify
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # `docs:build` runs `capture-transcripts.ts` first, which compiles the
+      # workspace with `tsc -b` and then executes all six scenarios, writing
+      # their real console output into the site. So the transcripts published
+      # here are produced by this commit's code — they cannot be stale, because
+      # they are never stored.
+      - name: Build documentation
+        run: pnpm docs:build
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: apps/docs/dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build-docs
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    permissions:
+      # `pages: write` publishes; `id-token: write` lets the deploy action prove
+      # to Pages that the artifact came from this workflow run.
+      pages: write
+      id-token: write
+
+    # One deployment at a time, and never cancelled — interrupting a publish can
+    # leave the site serving a half-uploaded artifact.
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

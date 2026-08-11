@@ -4,7 +4,7 @@
  * This file drives the real `BookStock` aggregate in the browser. Nothing here
  * is a simulation: `buildLibrary()` is the same composition root the six
  * terminal scenarios use, and the objects it wires up are the same classes the
- * 66 tests pin. The only difference is that the buttons are DOM elements
+ * 70 tests pin. The only difference is that the buttons are DOM elements
  * instead of lines in a script.
  *
  * That is possible because no package under `packages/` imports anything from

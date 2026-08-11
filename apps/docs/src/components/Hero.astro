@@ -1,0 +1,53 @@
+---
+/**
+ * Starlight's hero, with its action links prefixed by the site's `base`.
+ *
+ * ## Why this override exists at all
+ *
+ * The two buttons on the landing page are declared in `index.mdx` frontmatter:
+ *
+ *   actions:
+ *     - text: See the docs
+ *       link: /concepts/01-entity/
+ *
+ * Starlight hands that string straight to `LinkButton` as an `href` (see
+ * `Hero.astro` in the package), so under a project-site `base` it resolves
+ * against the domain root and 404s. `rehypeBaseLinks` cannot help: frontmatter
+ * is parsed YAML, never part of the Markdown tree the plugin walks.
+ *
+ * ## Why not just write the base into the frontmatter
+ *
+ * Because `/municipal-library/concepts/01-entity/` in a content file makes the
+ * deployment target a fact about the document. Move to a custom domain and two
+ * links break in a way nothing catches — no build error, no type error, just a
+ * dead button on the front page. Doing it here keeps the deployment path in
+ * `astro.config.mjs`, which is where it is already declared.
+ *
+ * ## On mutating route data
+ *
+ * `Astro.locals.starlightRoute` is Starlight's documented seam for overrides,
+ * and adjusting it before delegating to the default component is the supported
+ * pattern. The rewrite is idempotent — a link already inside `base` is left
+ * alone — so running twice over the same data changes nothing.
+ */
+
+import Default from '@astrojs/starlight/components/Hero.astro'
+
+// `BASE_URL` is Astro's own view of `base`, always with a trailing slash.
+// Under a custom domain it is '/', which makes `prefix` empty and every branch
+// below a no-op.
+const prefix = import.meta.env.BASE_URL.replace(/\/$/, '')
+
+const hero = Astro.locals.starlightRoute.entry.data.hero
+
+if (prefix !== '' && hero?.actions !== undefined) {
+  for (const action of hero.actions) {
+    const link = action.link
+    if (!link.startsWith('/') || link.startsWith('//')) continue
+    if (link === prefix || link.startsWith(`${prefix}/`)) continue
+    action.link = `${prefix}${link}`
+  }
+}
+---
+
+<Default />

@@ -23,7 +23,7 @@ packages/
 apps/
   scenarios/           six narrated scripts — a terminal over the composition
   docs/                this site, including the live playground
-tests/                 66 tests against the published surface of each context
+tests/                 70 tests against the published surface of each context
 docs/                  the concept documents, in prose
 ```
 
@@ -42,7 +42,7 @@ its own words), `application/` (use cases, one aggregate each), `infrastructure/
 | | |
 |---|---|
 | `pnpm build` | `tsc -b` across the project graph |
-| `pnpm test` | builds, then runs 66 tests |
+| `pnpm test` | builds, then runs 70 tests |
 | `pnpm scenarios` | all six walkthroughs, in order |
 | `pnpm scenario:1` … `:6` | one at a time |
 | `pnpm docs:dev` | this site, including [the playground](/playground/) (restart it to pick up edits to `docs/*.md`) |
