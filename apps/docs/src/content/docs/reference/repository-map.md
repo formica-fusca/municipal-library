@@ -22,7 +22,7 @@ library/
   lending/             Loan · HoldQueue ─ HoldRequest
 bookshop/
   inventory/           StockItem                 ← the contrast
-composition/           wiring.ts — the one place the contexts meet
+composition/           the one place the contexts meet — adapters + subscriptions
 apps/
   scenarios/           six narrated scripts — a terminal over the composition
   docs/                this site, including the live playground

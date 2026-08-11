@@ -127,8 +127,10 @@ the kernel: no other context has any business naming a loan.
 
 ## The composition root
 
-`composition/src/wiring.ts` is the only file that imports more than one
-bounded context. Everything crossing a border is one of two things:
+`composition` is the only package that depends on more than one bounded
+context — a claim `package.json` and `tsc -b` enforce, rather than one this
+document asks you to take on trust. Everything crossing a border is one of two
+things, and each has a module of its own so that neither can be added quietly:
 
 **1. An adapter implementing a port the consuming context declared.**
 
@@ -272,7 +274,7 @@ Being explicit, since it is a teaching artefact:
 | | |
 |---|---|
 | Package graph | `tsconfig.json`, `pnpm-workspace.yaml` |
-| Composition root | `composition/src/wiring.ts` |
+| Composition root | `composition/src/wiring.ts`, `adapters.ts`, `subscriptions.ts` |
 | Ports (the ACL) | `library/lending/src/application/ports.ts` |
 | A published surface | `library/inventory/src/index.ts` |
 | Compiler settings | `tsconfig.base.json` |

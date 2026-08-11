@@ -82,7 +82,7 @@ the chain and notice that no single file contains it:
 
 1. \`ReturnBook\` calls \`shelf.acceptReturn()\`
 2. Inventory raises \`inventory.title-became-available\`
-3. a subscriber in \`wiring.ts\` calls \`HoldDesk.allocateOnAvailability()\`
+3. a subscriber in \`subscriptions.ts\` calls \`HoldDesk.allocateOnAvailability()\`
 4. \`HoldQueue\` picks the front of the queue
 
 Inventory does not import Lending. Lending does not import Inventory. Each end

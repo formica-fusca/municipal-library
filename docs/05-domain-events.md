@@ -238,7 +238,7 @@ mostly to make it visible: three copies arrive, one `title-became-available`.
 | Commit ordering | `foundation/event-bus/src/unit-of-work.ts` |
 | The bus | `foundation/event-bus/src/in-memory-event-bus.ts` |
 | Child records, root records | `inventory/src/domain/copy.ts` + `book-stock.ts` |
-| Every subscription in the system | `composition/src/wiring.ts` |
+| Every subscription in the system | `composition/src/subscriptions.ts` |
 | Scenario | `pnpm scenario:5` |
 | Tests | `tests/ddd-core.test.ts`, `tests/event-bus.test.ts` |
 
