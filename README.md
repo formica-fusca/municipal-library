@@ -157,8 +157,8 @@ Each is a standalone script that prints a narrated transcript.
 | 5   | `pnpm scenario:5` | **Can an entity emit a domain event?** The question this repo was built to answer            |
 | 6   | `pnpm scenario:6` | The same word "stock", modelled two irreconcilable ways, both correct                        |
 
-Start with **5** if you came here from the StackOverflow threads in `CLAUDE.md`.
-Start with **1** if you want the story in order.
+Start with **5** if you came here for the argument about whether an entity may
+emit a domain event. Start with **1** if you want the story in order.
 
 ---
 
@@ -195,6 +195,24 @@ Written to be read in this order, but each stands alone.
 5. [Domain events](docs/05-domain-events.md) — **the motivating question**, answered against the linked debates
 6. [Two models of stock](docs/06-two-models-of-stock.md) — bounded contexts made concrete
 7. [Architecture](docs/07-architecture.md) — the monorepo, the layers, and what the compiler actually enforces
+
+Each one closes with a short **Further reading** list — the primary sources
+behind the pattern it describes, mostly Evans, Fowler and Vernon.
+
+The site adds five reference pages that have no counterpart in `docs/`, because
+they are tables and indexes rather than prose:
+
+- [Further reading](https://formica-fusca.github.io/municipal-library/reference/further-reading/)
+  — every source cited above in one annotated bibliography, plus the wider
+  reading that belongs to no single document
+- [The aggregates at a glance](https://formica-fusca.github.io/municipal-library/reference/aggregates/)
+  — every root, its children, and the invariant it protects
+- [The ubiquitous language](https://formica-fusca.github.io/municipal-library/reference/ubiquitous-language/)
+  — the vocabulary, and the words deliberately refused
+- [A map of the repository](https://formica-fusca.github.io/municipal-library/reference/repository-map/)
+  — where everything lives and how to run it
+- [Two calls left to you](https://formica-fusca.github.io/municipal-library/reference/your-call/)
+  — the two `👉 YOUR CALL` decisions, with their alternatives
 
 ---
 

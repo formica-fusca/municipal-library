@@ -234,4 +234,18 @@ past its boundary and shows both the aggregate and the repository refusing it.
 
 ---
 
+## Further reading
+
+- **[Effective Aggregate Design, part 1](https://www.dddcommunity.org/wp-content/uploads/files/pdf_articles/Vernon_2011_1.pdf)**
+  — Vaughn Vernon, 2011. Modelling *true* invariants inside a consistency
+  boundary, and how to tell one from a rule that merely sounds absolute.
+- **[Effective Aggregate Design, part 3](https://www.dddcommunity.org/wp-content/uploads/files/pdf_articles/Vernon_2011_3.pdf)**
+  — Vaughn Vernon, 2011. What happens to a rule that spans two aggregates:
+  eventual consistency, and who is accountable for the gap.
+- **[Design validations in the domain model layer](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations)**
+  — Microsoft. Where validation belongs when the model is meant to be
+  always-valid, rather than constructed invalid and checked afterwards.
+
+---
+
 **Previous:** [← Entity vs Aggregate Root](03-entity-vs-aggregate.md) · **Next:** [Domain events →](05-domain-events.md)

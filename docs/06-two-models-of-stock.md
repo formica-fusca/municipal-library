@@ -151,4 +151,18 @@ difference: one is full of barcodes and lifecycles, the other is arithmetic.
 
 ---
 
+## Further reading
+
+- **[Bounded Context](https://martinfowler.com/bliki/BoundedContext.html)**
+  — Martin Fowler. Why one unified model across an organisation fails, and what
+  it means for one word to name two different things.
+- **[Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html)**
+  — Martin Fowler. The shared language of developers and domain experts,
+  structured by the model rather than agreed in a glossary.
+- **[Anemic Domain Model](https://martinfowler.com/bliki/AnemicDomainModel.html)**
+  — Martin Fowler, 2003. Worth reading before deciding whether the shop's
+  `StockItem` is anaemic or simply small.
+
+---
+
 **Previous:** [← Domain events](05-domain-events.md) · **Next:** [Architecture →](07-architecture.md)

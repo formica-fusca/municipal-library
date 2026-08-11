@@ -160,4 +160,16 @@ That mechanism, and the reasoning behind it, is
 
 ---
 
+## Further reading
+
+- **[Evans Classification](https://martinfowler.com/bliki/EvansClassification.html)**
+  — Martin Fowler. How Evans divides a model into Entities, Value Objects and
+  Services, and why the line between the first two is identity rather than size.
+- **[Value Object](https://martinfowler.com/bliki/ValueObject.html)**
+  — Martin Fowler. Equality by attribute, and the case for immutability.
+- **[Domain-Driven Design Reference](https://www.domainlanguage.com/ddd/reference/)**
+  — Eric Evans, 2015. The original definitions, free, in about fifty pages.
+
+---
+
 **Next:** [Aggregate Root →](02-aggregate-root.md)

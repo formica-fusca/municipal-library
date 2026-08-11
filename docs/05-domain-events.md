@@ -3,8 +3,8 @@
 > **Can an entity emit a domain event, or must it come from the aggregate root?**
 
 This is the question the repository was built to answer. `pnpm scenario:5` runs
-the argument; this document sets it out in prose, alongside the debates linked
-in `CLAUDE.md`.
+the argument; this document sets it out in prose. The debate it answers is
+collected under [Further reading](#further-reading) at the end.
 
 ---
 
@@ -241,6 +241,28 @@ mostly to make it visible: three copies arrive, one `title-became-available`.
 | Every subscription in the system | `packages/composition/src/wiring.ts` |
 | Scenario | `pnpm scenario:5` |
 | Tests | `tests/ddd-core.test.ts`, `tests/event-bus.test.ts` |
+
+---
+
+## Further reading
+
+The debate this document answers, in its primary sources:
+
+- **[Domain Event](https://martinfowler.com/eaaDev/DomainEvent.html)**
+  — Martin Fowler, 2005. The original write-up: an object capturing the memory
+  of something that happened, distinct from the state change it caused.
+- **[Domain Events — Salvation](https://udidahan.com/2009/06/14/domain-events-salvation/)**
+  — Udi Dahan, 2009. The post most of the online argument descends from. Raises
+  events from inside entities and defers their dispatch.
+- **[What do you mean by "Event-Driven"?](https://martinfowler.com/articles/201701-event-driven.html)**
+  — Martin Fowler, 2017. Separates event notification, event-carried state
+  transfer, event sourcing and CQRS — four things one phrase is used for.
+- **[Domain events: design and implementation](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation)**
+  — Microsoft. Buffering events on the aggregate, dispatching them around the
+  transaction boundary, and where an integration event differs.
+- **[Unit of Work](https://martinfowler.com/eaaCatalog/unitOfWork.html)**
+  — Martin Fowler, *PoEAA*, 2002. The pattern that makes "publish only after
+  commit" expressible at all.
 
 ---
 

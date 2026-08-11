@@ -192,4 +192,18 @@ saves". Reference data needs that just as much as a rich behavioural cluster.
 
 ---
 
+## Further reading
+
+- **[DDD_Aggregate](https://martinfowler.com/bliki/DDD_Aggregate.html)**
+  — Martin Fowler. An aggregate as one unit for data changes, with the root as
+  the only member anything outside may hold a reference to.
+- **[Effective Aggregate Design, part 1](https://www.dddcommunity.org/wp-content/uploads/files/pdf_articles/Vernon_2011_1.pdf)**
+  — Vaughn Vernon, 2011. The argument that a consistency boundary should contain
+  exactly what a true invariant spans, worked through on a real model.
+- **[Repository](https://martinfowler.com/eaaCatalog/repository.html)**
+  — Martin Fowler, *PoEAA*, 2002. The pattern itself; the one-per-aggregate-root
+  rule applied here comes from Evans rather than from this entry.
+
+---
+
 **Previous:** [← Entity](01-entity.md) · **Next:** [Entity vs Aggregate Root →](03-entity-vs-aggregate.md)

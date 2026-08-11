@@ -279,4 +279,18 @@ Being explicit, since it is a teaching artefact:
 
 ---
 
+## Further reading
+
+- **[Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)**
+  — Alistair Cockburn. Ports and adapters from the person who named them: the
+  application declares the interface, everything external implements it.
+- **[Anti-corruption Layer](https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer)**
+  — Microsoft. The translation layer at a context boundary, which is what the
+  ports in `lending/src/application/ports.ts` are doing.
+- **[Context Mapping](https://github.com/ddd-crew/context-mapping)**
+  — DDD Crew. The relationship patterns between contexts — shared kernel,
+  conformist, anti-corruption layer, published language — as diagrams.
+
+---
+
 **Previous:** [← Two models of stock](06-two-models-of-stock.md) · **Back to** [README](../README.md)

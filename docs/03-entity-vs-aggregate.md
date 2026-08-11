@@ -181,4 +181,18 @@ with.
 
 ---
 
+## Further reading
+
+- **[Effective Aggregate Design, part 2](https://www.dddcommunity.org/wp-content/uploads/files/pdf_articles/Vernon_2011_2.pdf)**
+  — Vaughn Vernon, 2011. Referencing another aggregate by identity rather than
+  by object reference, and what that costs at the point of use.
+- **[Tell Don't Ask](https://martinfowler.com/bliki/TellDontAsk.html)**
+  — Martin Fowler. Not a DDD article, but the principle behind a root exposing
+  behaviour instead of handing out its internals.
+- **[Domain-Driven Design Reference](https://www.domainlanguage.com/ddd/reference/)**
+  — Eric Evans, 2015. The Aggregates section, for the original wording of what a
+  root is responsible for.
+
+---
+
 **Previous:** [← Aggregate Root](02-aggregate-root.md) · **Next:** [Invariants →](04-invariants.md)
