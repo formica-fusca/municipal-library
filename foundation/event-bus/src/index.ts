@@ -1,11 +1,11 @@
-export { EventLog } from './event-log.js'
-export { InMemoryEventBus } from './in-memory-event-bus.js'
-export type { EventBusOptions } from './in-memory-event-bus.js'
+export { EventLog } from "./lib/event-log.js";
+export { InMemoryEventBus } from "./lib/in-memory-event-bus.js";
+export type { EventBusOptions } from "./lib/in-memory-event-bus.js";
 export type {
   EventHandler,
   EventPublisher,
   EventSubscriber,
   EventType,
   Unsubscribe,
-} from './ports.js'
-export { UnitOfWork } from './unit-of-work.js'
+} from "./lib/ports.js";
+export { UnitOfWork } from "./lib/unit-of-work.js";
