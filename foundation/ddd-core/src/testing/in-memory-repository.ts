@@ -1,6 +1,6 @@
-import type { AggregateRoot } from '../aggregate-root.js'
-import type { Identifier } from '../identifier.js'
-import type { Repository } from '../repository.js'
+import type { AggregateRoot } from "../aggregate-root.js";
+import type { Identifier } from "../identifier.js";
+import type { Repository } from "../lib/repository.js";
 
 /**
  * A Map-backed repository, shared by every bounded context in this showcase.
@@ -21,28 +21,29 @@ import type { Repository } from '../repository.js'
  * the write that justified them has succeeded. See `UnitOfWork` in
  * `@local/event-bus`.
  */
-export class InMemoryRepository<TAggregate extends AggregateRoot<TId>, TId extends Identifier>
-  implements Repository<TAggregate, TId>
-{
-  protected readonly store = new Map<string, TAggregate>()
+export class InMemoryRepository<
+  TAggregate extends AggregateRoot<TId>,
+  TId extends Identifier,
+> implements Repository<TAggregate, TId> {
+  protected readonly store = new Map<string, TAggregate>();
 
   async findById(id: TId): Promise<TAggregate | undefined> {
-    return this.store.get(id.value)
+    return this.store.get(id.value);
   }
 
   async save(aggregate: TAggregate): Promise<void> {
     // A real repository would write here and fail loudly on a conflict.
     // Asserting invariants at the boundary is the closest honest equivalent:
     // nothing inconsistent is allowed to reach storage.
-    aggregate.assertInvariants()
-    this.store.set(aggregate.id.value, aggregate)
+    aggregate.assertInvariants();
+    this.store.set(aggregate.id.value, aggregate);
   }
 
   async all(): Promise<readonly TAggregate[]> {
-    return [...this.store.values()]
+    return [...this.store.values()];
   }
 
   get size(): number {
-    return this.store.size
+    return this.store.size;
   }
 }

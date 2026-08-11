@@ -1,4 +1,4 @@
-import { InvariantViolation } from './errors.js'
+import { InvariantViolation } from "./errors.js";
 
 /**
  * A Value Object is defined entirely by its attributes. It has no identity and
@@ -16,10 +16,10 @@ import { InvariantViolation } from './errors.js'
  * mutate a value you are holding.
  */
 export abstract class ValueObject<TProps extends object> {
-  protected readonly props: Readonly<TProps>
+  protected readonly props: Readonly<TProps>;
 
   protected constructor(props: TProps) {
-    this.props = Object.freeze({ ...props })
+    this.props = Object.freeze({ ...props });
   }
 
   /**
@@ -32,25 +32,30 @@ export abstract class ValueObject<TProps extends object> {
    * Object is a modelling smell, and this method not supporting it is a feature.
    */
   equals(other: ValueObject<TProps> | null | undefined): boolean {
-    if (other === null || other === undefined) return false
-    if (other === this) return true
-    if (other.constructor !== this.constructor) return false
+    if (other === null || other === undefined) return false;
+    if (other === this) return true;
+    if (other.constructor !== this.constructor) return false;
 
-    const mine = this.props as Readonly<Record<string, unknown>>
-    const theirs = other.props as Readonly<Record<string, unknown>>
-    const keys = Object.keys(mine)
+    const mine = this.props as Readonly<Record<string, unknown>>;
+    const theirs = other.props as Readonly<Record<string, unknown>>;
+    const keys = Object.keys(mine);
 
-    if (keys.length !== Object.keys(theirs).length) return false
+    if (keys.length !== Object.keys(theirs).length) return false;
 
     return keys.every((key) => {
-      const a = mine[key]
-      const b = theirs[key]
-      if (a instanceof ValueObject) return a.equals(b as ValueObject<never>)
-      if (a && typeof a === 'object' && 'equals' in a && typeof a.equals === 'function') {
-        return (a.equals as (o: unknown) => boolean)(b)
+      const a = mine[key];
+      const b = theirs[key];
+      if (a instanceof ValueObject) return a.equals(b as ValueObject<never>);
+      if (
+        a &&
+        typeof a === "object" &&
+        "equals" in a &&
+        typeof a.equals === "function"
+      ) {
+        return (a.equals as (o: unknown) => boolean)(b);
       }
-      return Object.is(a, b)
-    })
+      return Object.is(a, b);
+    });
   }
 
   /**
@@ -60,6 +65,6 @@ export abstract class ValueObject<TProps extends object> {
    * simply existing.
    */
   protected static reject(rule: string, explanation: string): never {
-    throw new InvariantViolation(rule, explanation)
+    throw new InvariantViolation(rule, explanation);
   }
 }

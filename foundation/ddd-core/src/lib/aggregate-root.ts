@@ -1,6 +1,6 @@
-import type { DomainEvent } from './domain-event.js'
-import { Entity } from './entity.js'
-import type { Identifier } from './identifier.js'
+import type { DomainEvent } from "./domain-event.js";
+import { Entity } from "./entity.js";
+import type { Identifier } from "./identifier.js";
 
 /**
  * An Aggregate Root is an Entity with a second job: it is the **consistency
@@ -32,7 +32,9 @@ import type { Identifier } from './identifier.js'
  *
  * See `docs/02-aggregate-root.md` and `docs/03-entity-vs-aggregate.md`.
  */
-export abstract class AggregateRoot<TId extends Identifier> extends Entity<TId> {
+export abstract class AggregateRoot<
+  TId extends Identifier,
+> extends Entity<TId> {
   /**
    * The child entities living inside this boundary.
    *
@@ -44,7 +46,7 @@ export abstract class AggregateRoot<TId extends Identifier> extends Entity<TId> 
    * children at all, and that is not a design failure.
    */
   protected childEntities(): readonly Entity<Identifier>[] {
-    return []
+    return [];
   }
 
   /**
@@ -56,10 +58,14 @@ export abstract class AggregateRoot<TId extends Identifier> extends Entity<TId> 
    * before the root recorded `TitleOutOfStock` must stay before it.
    */
   override pullDomainEvents(): readonly DomainEvent[] {
-    const ownEvents = super.pullDomainEvents()
-    const childEvents = this.childEntities().flatMap((child) => child.pullDomainEvents())
+    const ownEvents = super.pullDomainEvents();
+    const childEvents = this.childEntities().flatMap((child) =>
+      child.pullDomainEvents(),
+    );
 
-    return [...ownEvents, ...childEvents].sort((a, b) => a.sequence - b.sequence)
+    return [...ownEvents, ...childEvents].sort(
+      (a, b) => a.sequence - b.sequence,
+    );
   }
 
   /**
@@ -73,5 +79,5 @@ export abstract class AggregateRoot<TId extends Identifier> extends Entity<TId> 
    * Call it at the end of every mutating method. In a persistent system you
    * would also call it before writing.
    */
-  abstract assertInvariants(): void
+  abstract assertInvariants(): void;
 }
