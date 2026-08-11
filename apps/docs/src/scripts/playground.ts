@@ -7,9 +7,9 @@
  * 70 tests pin. The only difference is that the buttons are DOM elements
  * instead of lines in a script.
  *
- * That is possible because no package under `packages/` imports anything from
- * Node. See `packages/composition/tsconfig.json`, where `"types": []` makes
- * that a compile error rather than a convention.
+ * That is possible because no domain package and no part of the composition
+ * root imports anything from Node. See `composition/tsconfig.json`, where
+ * `"types": []` makes that a compile error rather than a convention.
  *
  * ## The one rule this file must not break
  *

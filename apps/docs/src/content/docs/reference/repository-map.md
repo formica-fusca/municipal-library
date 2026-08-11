@@ -7,19 +7,22 @@ sidebar:
 
 ## Layout
 
+The top level names the thing, not the layer: two businesses, the generic
+machinery they both sit on, and the one place they meet.
+
 ```
-packages/
+foundation/
   ddd-core/            Entity · AggregateRoot · ValueObject · DomainEvent · Identifier
   shared-kernel/       Isbn · Money · TitleId · CopyId · MemberId
   event-bus/           the hand-rolled pub/sub + UnitOfWork (dispatch after commit)
-  library/
-    catalog/           Title
-    inventory/         BookStock ─ Copy          ← the showcase aggregate
-    membership/        Member
-    lending/           Loan · HoldQueue ─ HoldRequest
-  bookshop/
-    inventory/         StockItem                 ← the contrast
-  composition/         wiring.ts — the one place the contexts meet
+library/
+  catalog/             Title
+  inventory/           BookStock ─ Copy          ← the showcase aggregate
+  membership/          Member
+  lending/             Loan · HoldQueue ─ HoldRequest
+bookshop/
+  inventory/           StockItem                 ← the contrast
+composition/           wiring.ts — the one place the contexts meet
 apps/
   scenarios/           six narrated scripts — a terminal over the composition
   docs/                this site, including the live playground
@@ -27,7 +30,15 @@ tests/                 70 tests against the published surface of each context
 docs/                  the concept documents, in prose
 ```
 
-`packages/composition` is a package, not part of an app, because there are two
+`library/inventory` and `bookshop/inventory` share a name deliberately — one
+word, two businesses, two models that cannot be reconciled. See
+[two models of stock](/concepts/06-two-models-of-stock/).
+
+Everything under `foundation/` is domain-agnostic, with one exception worth
+knowing: `shared-kernel` holds domain vocabulary that both businesses own
+jointly, which makes changing it an agreement rather than an upgrade.
+
+`composition` is a package, not part of an app, because there are two
 ways to drive this model and only one way it is wired. It compiles with
 `"types": []` — `console` and `process` are build errors inside it — which is
 precisely what lets [the playground](/playground/) run the real aggregates in a

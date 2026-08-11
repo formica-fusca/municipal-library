@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../../foundation/ddd-core" },
+    { "path": "../../foundation/shared-kernel" },
+    { "path": "../../foundation/event-bus" }
+  ]
+}

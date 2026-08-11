@@ -31,16 +31,16 @@ importers:
         version: 0.41.7(@astrojs/markdown-remark@7.2.2)(astro@7.2.0(@astrojs/markdown-remark@7.2.2)(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.13.3)(tsx@4.23.11)(yaml@2.9.0))(typescript@5.9.3)
       '@local/composition':
         specifier: workspace:*
-        version: link:../../packages/composition
+        version: link:../../composition
       '@local/ddd-core':
         specifier: workspace:*
-        version: link:../../packages/ddd-core
+        version: link:../../foundation/ddd-core
       '@local/library-inventory':
         specifier: workspace:*
-        version: link:../../packages/library/inventory
+        version: link:../../library/inventory
       '@local/shared-kernel':
         specifier: workspace:*
-        version: link:../../packages/shared-kernel
+        version: link:../../foundation/shared-kernel
       astro:
         specifier: ^7.2.0
         version: 7.2.0(@astrojs/markdown-remark@7.2.2)(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.13.3)(tsx@4.23.11)(yaml@2.9.0)
@@ -68,55 +68,55 @@ importers:
     dependencies:
       '@local/bookshop-inventory':
         specifier: workspace:*
-        version: link:../../packages/bookshop/inventory
+        version: link:../../bookshop/inventory
       '@local/composition':
         specifier: workspace:*
-        version: link:../../packages/composition
+        version: link:../../composition
       '@local/ddd-core':
         specifier: workspace:*
-        version: link:../../packages/ddd-core
+        version: link:../../foundation/ddd-core
       '@local/event-bus':
         specifier: workspace:*
-        version: link:../../packages/event-bus
+        version: link:../../foundation/event-bus
       '@local/library-catalog':
         specifier: workspace:*
-        version: link:../../packages/library/catalog
+        version: link:../../library/catalog
       '@local/library-inventory':
         specifier: workspace:*
-        version: link:../../packages/library/inventory
+        version: link:../../library/inventory
       '@local/library-lending':
         specifier: workspace:*
-        version: link:../../packages/library/lending
+        version: link:../../library/lending
       '@local/library-membership':
         specifier: workspace:*
-        version: link:../../packages/library/membership
+        version: link:../../library/membership
       '@local/shared-kernel':
         specifier: workspace:*
-        version: link:../../packages/shared-kernel
+        version: link:../../foundation/shared-kernel
 
-  packages/bookshop/inventory:
+  bookshop/inventory:
     dependencies:
       '@local/ddd-core':
         specifier: workspace:*
-        version: link:../../ddd-core
+        version: link:../../foundation/ddd-core
       '@local/event-bus':
         specifier: workspace:*
-        version: link:../../event-bus
+        version: link:../../foundation/event-bus
       '@local/shared-kernel':
         specifier: workspace:*
-        version: link:../../shared-kernel
+        version: link:../../foundation/shared-kernel
 
-  packages/composition:
+  composition:
     dependencies:
       '@local/bookshop-inventory':
         specifier: workspace:*
         version: link:../bookshop/inventory
       '@local/ddd-core':
         specifier: workspace:*
-        version: link:../ddd-core
+        version: link:../foundation/ddd-core
       '@local/event-bus':
         specifier: workspace:*
-        version: link:../event-bus
+        version: link:../foundation/event-bus
       '@local/library-catalog':
         specifier: workspace:*
         version: link:../library/catalog
@@ -131,96 +131,96 @@ importers:
         version: link:../library/membership
       '@local/shared-kernel':
         specifier: workspace:*
-        version: link:../shared-kernel
+        version: link:../foundation/shared-kernel
 
-  packages/ddd-core: {}
+  foundation/ddd-core: {}
 
-  packages/event-bus:
+  foundation/event-bus:
     dependencies:
       '@local/ddd-core':
         specifier: workspace:*
         version: link:../ddd-core
 
-  packages/library/catalog:
-    dependencies:
-      '@local/ddd-core':
-        specifier: workspace:*
-        version: link:../../ddd-core
-      '@local/event-bus':
-        specifier: workspace:*
-        version: link:../../event-bus
-      '@local/shared-kernel':
-        specifier: workspace:*
-        version: link:../../shared-kernel
-
-  packages/library/inventory:
-    dependencies:
-      '@local/ddd-core':
-        specifier: workspace:*
-        version: link:../../ddd-core
-      '@local/event-bus':
-        specifier: workspace:*
-        version: link:../../event-bus
-      '@local/shared-kernel':
-        specifier: workspace:*
-        version: link:../../shared-kernel
-
-  packages/library/lending:
-    dependencies:
-      '@local/ddd-core':
-        specifier: workspace:*
-        version: link:../../ddd-core
-      '@local/event-bus':
-        specifier: workspace:*
-        version: link:../../event-bus
-      '@local/shared-kernel':
-        specifier: workspace:*
-        version: link:../../shared-kernel
-
-  packages/library/membership:
-    dependencies:
-      '@local/ddd-core':
-        specifier: workspace:*
-        version: link:../../ddd-core
-      '@local/event-bus':
-        specifier: workspace:*
-        version: link:../../event-bus
-      '@local/shared-kernel':
-        specifier: workspace:*
-        version: link:../../shared-kernel
-
-  packages/shared-kernel:
+  foundation/shared-kernel:
     dependencies:
       '@local/ddd-core':
         specifier: workspace:*
         version: link:../ddd-core
+
+  library/catalog:
+    dependencies:
+      '@local/ddd-core':
+        specifier: workspace:*
+        version: link:../../foundation/ddd-core
+      '@local/event-bus':
+        specifier: workspace:*
+        version: link:../../foundation/event-bus
+      '@local/shared-kernel':
+        specifier: workspace:*
+        version: link:../../foundation/shared-kernel
+
+  library/inventory:
+    dependencies:
+      '@local/ddd-core':
+        specifier: workspace:*
+        version: link:../../foundation/ddd-core
+      '@local/event-bus':
+        specifier: workspace:*
+        version: link:../../foundation/event-bus
+      '@local/shared-kernel':
+        specifier: workspace:*
+        version: link:../../foundation/shared-kernel
+
+  library/lending:
+    dependencies:
+      '@local/ddd-core':
+        specifier: workspace:*
+        version: link:../../foundation/ddd-core
+      '@local/event-bus':
+        specifier: workspace:*
+        version: link:../../foundation/event-bus
+      '@local/shared-kernel':
+        specifier: workspace:*
+        version: link:../../foundation/shared-kernel
+
+  library/membership:
+    dependencies:
+      '@local/ddd-core':
+        specifier: workspace:*
+        version: link:../../foundation/ddd-core
+      '@local/event-bus':
+        specifier: workspace:*
+        version: link:../../foundation/event-bus
+      '@local/shared-kernel':
+        specifier: workspace:*
+        version: link:../../foundation/shared-kernel
 
   tests:
     dependencies:
       '@local/bookshop-inventory':
         specifier: workspace:*
-        version: link:../packages/bookshop/inventory
+        version: link:../bookshop/inventory
       '@local/ddd-core':
         specifier: workspace:*
-        version: link:../packages/ddd-core
+        version: link:../foundation/ddd-core
       '@local/event-bus':
         specifier: workspace:*
-        version: link:../packages/event-bus
+        version: link:../foundation/event-bus
       '@local/library-catalog':
         specifier: workspace:*
-        version: link:../packages/library/catalog
+        version: link:../library/catalog
       '@local/library-inventory':
         specifier: workspace:*
-        version: link:../packages/library/inventory
+        version: link:../library/inventory
       '@local/library-lending':
         specifier: workspace:*
-        version: link:../packages/library/lending
+        version: link:../library/lending
       '@local/library-membership':
         specifier: workspace:*
-        version: link:../packages/library/membership
+        version: link:../library/membership
       '@local/shared-kernel':
         specifier: workspace:*
-        version: link:../packages/shared-kernel
+        version: link:../foundation/shared-kernel
 
 packages:
 

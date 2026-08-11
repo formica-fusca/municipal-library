@@ -16,7 +16,7 @@ Ordered by cost. Always prefer the cheapest one that can actually hold the rule.
 ### 1. In a type — free, and total
 
 ```ts
-// packages/shared-kernel/src/isbn.ts
+// foundation/shared-kernel/src/isbn.ts
 export class Isbn extends ValueObject<IsbnProps> {
   private constructor(props: IsbnProps) { super(props) }
 
@@ -201,13 +201,13 @@ exceptions for genuine faults keeps the distinction meaningful — and stops
 // every mutating method on an aggregate
 this.assertInvariants()
 
-// packages/ddd-core/src/testing/in-memory-repository.ts
+// foundation/ddd-core/src/testing/in-memory-repository.ts
 async save(aggregate: TAggregate): Promise<void> {
   aggregate.assertInvariants()          // nothing inconsistent reaches storage
   this.store.set(aggregate.id.value, aggregate)
 }
 
-// packages/event-bus/src/unit-of-work.ts
+// foundation/event-bus/src/unit-of-work.ts
 async commit(repository, aggregate) {
   aggregate.assertInvariants()          // refuse to write nonsense
   await repository.save(aggregate)
@@ -224,12 +224,12 @@ past its boundary and shows both the aggregate and the repository refusing it.
 
 | | |
 |---|---|
-| In a type | `packages/shared-kernel/src/isbn.ts`, `money.ts` |
-| In an entity | `packages/library/inventory/src/domain/copy-status.ts` |
+| In a type | `foundation/shared-kernel/src/isbn.ts`, `money.ts` |
+| In an entity | `library/inventory/src/domain/copy-status.ts` |
 | Across an aggregate | `book-stock.ts` → `assertInvariants()` |
 | Structural, non-numeric | `hold-queue.ts` → `assertInvariants()` |
-| The rule that is a policy | `packages/library/membership/src/domain/member.ts` |
-| Error hierarchy | `packages/ddd-core/src/errors.ts` |
+| The rule that is a policy | `library/membership/src/domain/member.ts` |
+| Error hierarchy | `foundation/ddd-core/src/errors.ts` |
 | Scenario | `pnpm scenario:4` |
 
 ---

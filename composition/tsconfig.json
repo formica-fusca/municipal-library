@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
@@ -18,9 +18,9 @@
   },
   "include": ["src/**/*.ts"],
   "references": [
-    { "path": "../ddd-core" },
-    { "path": "../shared-kernel" },
-    { "path": "../event-bus" },
+    { "path": "../foundation/ddd-core" },
+    { "path": "../foundation/shared-kernel" },
+    { "path": "../foundation/event-bus" },
     { "path": "../library/catalog" },
     { "path": "../library/inventory" },
     { "path": "../library/membership" },

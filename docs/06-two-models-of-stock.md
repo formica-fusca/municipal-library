@@ -13,13 +13,13 @@ The library and its shop annex both hold copies of *Dune* on shelves, twenty
 metres apart. Both call it "stock". The models share nothing.
 
 ```ts
-// packages/library/inventory/src/domain/book-stock.ts
+// library/inventory/src/domain/book-stock.ts
 export class BookStock extends AggregateRoot<TitleId> {
   readonly #copies = new Map<string, Copy>()      // identified entities
   #availableCount = 0
 }
 
-// packages/bookshop/inventory/src/domain/stock-item.ts
+// bookshop/inventory/src/domain/stock-item.ts
 export class StockItem extends AggregateRoot<ProductId> {
   #onHand: number                                  // …a number
   #reserved: number
@@ -140,9 +140,9 @@ because an aggregate looks too simple without them.
 
 | | |
 |---|---|
-| Copy-based stock | `packages/library/inventory/src/domain/book-stock.ts` |
-| Quantity-based stock | `packages/bookshop/inventory/src/domain/stock-item.ts` |
-| The shared vocabulary | `packages/shared-kernel/src/` |
+| Copy-based stock | `library/inventory/src/domain/book-stock.ts` |
+| Quantity-based stock | `bookshop/inventory/src/domain/stock-item.ts` |
+| The shared vocabulary | `foundation/shared-kernel/src/` |
 | Scenario | `pnpm scenario:6` |
 | Tests | `tests/book-stock.test.ts` vs `tests/bookshop-stock.test.ts` |
 

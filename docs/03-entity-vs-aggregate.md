@@ -24,7 +24,7 @@ so they can be.
 In code, literally:
 
 ```ts
-// packages/ddd-core/src/aggregate-root.ts
+// foundation/ddd-core/src/aggregate-root.ts
 export abstract class AggregateRoot<TId extends Identifier> extends Entity<TId> {
   protected childEntities(): readonly Entity<Identifier>[] { return [] }
   override pullDomainEvents(): readonly DomainEvent[] { /* own + children */ }
@@ -153,7 +153,7 @@ The most important difference is not on any class. It is that **nothing outside
 package's `index.ts`:
 
 ```ts
-// packages/library/inventory/src/index.ts
+// library/inventory/src/index.ts
 export { BookStock } from './domain/book-stock.js'
 export type { CopySnapshot } from './domain/copy.js'   // ← inert data
 // `Copy` itself: deliberately absent
@@ -173,9 +173,9 @@ with.
 
 | | |
 |---|---|
-| Child entity, root in the same folder | `packages/library/inventory/src/domain/` |
-| A second pair | `packages/library/lending/src/domain/hold-request.ts` + `hold-queue.ts` |
-| The boundary as an export list | `packages/library/inventory/src/index.ts` |
+| Child entity, root in the same folder | `library/inventory/src/domain/` |
+| A second pair | `library/lending/src/domain/hold-request.ts` + `hold-queue.ts` |
+| The boundary as an export list | `library/inventory/src/index.ts` |
 | The boundary broken on purpose | `scenarios/04-invariants-under-attack.ts` |
 | Tests | `tests/book-stock.test.ts` |
 

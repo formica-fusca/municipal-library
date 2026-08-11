@@ -14,7 +14,7 @@ out.
 
 ## 1 · Whose turn is it when a copy comes back?
 
-**`packages/library/lending/src/domain/hold-allocation-policy.ts`**
+**`library/lending/src/domain/hold-allocation-policy.ts`**
 
 Expressed as an injectable **Domain Policy** — the Strategy pattern applied to a
 business rule — because this genuinely varies between libraries, and because it
@@ -66,7 +66,7 @@ which assertions your rule changes.
 
 ## 2 · What happens when a race pushes a member past their allowance?
 
-**`packages/library/membership/src/domain/member.ts`**, in `loanTaken()`
+**`library/membership/src/domain/member.ts`**, in `loanTaken()`
 
 Two borrow requests can both pass the eligibility check before either commits.
 The second one to arrive here finds the member already at their limit — and the

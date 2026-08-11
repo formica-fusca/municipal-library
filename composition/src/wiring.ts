@@ -45,9 +45,9 @@ import { InMemoryStockItemRepository, ShopCounter } from '@local/bookshop-invent
  * 1. **An adapter** implementing a port that the consuming context declared.
  * 2. **A subscription** on the event bus.
  *
- * Nothing else crosses a border. `grep -l "library-inventory" packages/` finds
- * no importer outside this package, and `tsc -b` enforces it: the contexts do
- * not list each other as dependencies, so an import would not resolve.
+ * Nothing else crosses a border. `grep -rn "from '@local/library-inventory'"
+ * library/ bookshop/` returns nothing, and `tsc -b` enforces it: the contexts
+ * do not list each other as dependencies, so an import would not resolve.
  *
  * ## Why this is a package and not part of an app
  *
@@ -127,7 +127,8 @@ class BorrowerDirectoryAdapter implements BorrowerDirectory {
  *
  * `randomUUID()` would make the output undiffable and would hide behavioural
  * changes in a wall of noise. Minting ids outside the domain also keeps
- * aggregates pure: nothing in `packages/` reaches for a source of randomness.
+ * aggregates pure: nothing under `foundation/`, `library/` or `bookshop/`
+ * reaches for a source of randomness.
  */
 class SequentialIds implements IdentifierFactory {
   #loans = 0

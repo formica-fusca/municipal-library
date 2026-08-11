@@ -36,7 +36,7 @@ boxed copies they receive, and the shop has no reason to track it. That single
 difference produces two completely different models of the word "stock" — and
 that contrast is the spine of this repository.
 
-The shop annex exists in `packages/bookshop/` purely to make the comparison
+The shop annex exists in `bookshop/` purely to make the comparison
 concrete. Read [`docs/06-two-models-of-stock.md`](docs/06-two-models-of-stock.md)
 for the argument.
 
@@ -218,19 +218,22 @@ they are tables and indexes rather than prose:
 
 ## Repository layout
 
+The top level names the thing, not the layer: two businesses, the generic
+machinery they both sit on, and the one place they meet.
+
 ```
-packages/
+foundation/
   ddd-core/            Entity · AggregateRoot · ValueObject · DomainEvent · Identifier
   shared-kernel/       Isbn · Money · TitleId · CopyId · MemberId
   event-bus/           the hand-rolled pub/sub + UnitOfWork (dispatch after commit)
-  library/
-    catalog/           Title
-    inventory/         BookStock ─ Copy          ← the showcase aggregate
-    membership/        Member
-    lending/           Loan · HoldQueue ─ HoldRequest
-  bookshop/
-    inventory/         StockItem                 ← the contrast
-  composition/         wiring.ts — the one place the contexts meet
+library/
+  catalog/             Title
+  inventory/           BookStock ─ Copy          ← the showcase aggregate
+  membership/          Member
+  lending/             Loan · HoldQueue ─ HoldRequest
+bookshop/
+  inventory/           StockItem                 ← the contrast
+composition/           wiring.ts — the one place the contexts meet
 apps/
   scenarios/           six narrated scripts — a terminal over the composition
   docs/                Astro + Starlight site — a browser over the same one
@@ -238,7 +241,17 @@ tests/                 70 tests against the published surface of each context
 docs/                  the concepts, in prose
 ```
 
-`packages/composition` is a package rather than part of an app because there are
+`library/inventory` and `bookshop/inventory` carry the same name on purpose:
+one word, two businesses, two irreconcilable models. That contrast is the spine
+of the repository, and [`docs/06-two-models-of-stock.md`](docs/06-two-models-of-stock.md)
+is the argument.
+
+`foundation/` holds what carries no domain knowledge — except `shared-kernel`,
+which is domain vocabulary both businesses own jointly. That distinction costs
+nothing to state and is easy to lose; [`docs/07-architecture.md`](docs/07-architecture.md)
+is pedantic about it.
+
+`composition` is a package rather than part of an app because there are
 two ways to drive this model and only one way it is wired. It compiles with
 `"types": []`, so `console` and `process` are build errors inside it — which is
 what lets the browser playground run the real aggregates rather than a copy.
@@ -255,13 +268,13 @@ are kept unreachable, since TypeScript has no package-private modifier.
 Both ship with a working default, clearly marked `👉 YOUR CALL`, and both are
 real design decisions rather than exercises:
 
-- **`packages/library/lending/src/domain/hold-allocation-policy.ts`** — whose
+- **`library/lending/src/domain/hold-allocation-policy.ts`** — whose
   turn is it when a copy comes back? Strict FIFO is implemented;
   skip-the-ineligible is provided as a worked alternative. Write your own
   `HoldAllocationPolicy` (≈8 lines) and pass it to `HoldDesk`;
   `tests/hold-queue.test.ts` will show you exactly which behaviour changed.
 
-- **`packages/library/membership/src/domain/member.ts`**, in `loanTaken()` —
+- **`library/membership/src/domain/member.ts`**, in `loanTaken()` —
   what should happen when a race pushes a member past their allowance? The
   current answer records `BorrowAllowanceExceeded` and carries on. Two other
   defensible answers are documented in place, with why one of them is a trap.

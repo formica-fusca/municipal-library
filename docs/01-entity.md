@@ -25,7 +25,7 @@ is a Value Object.
 ## The consequence: equality ignores attributes
 
 ```ts
-// packages/ddd-core/src/entity.ts
+// foundation/ddd-core/src/entity.ts
 equals(other: Entity<Identifier> | null | undefined): boolean {
   if (other === null || other === undefined) return false
   if (other === this) return true
@@ -73,7 +73,7 @@ borrowBook.execute({ memberId: titleId, titleId: memberId })   // compiles fine 
 So each subclass of `Identifier` declares a distinct tag:
 
 ```ts
-// packages/shared-kernel/src/identities.ts
+// foundation/shared-kernel/src/identities.ts
 export class TitleId extends Identifier {
   declare protected readonly _tag: 'TitleId'
   private constructor(value: string) { super(value) }
@@ -102,7 +102,7 @@ checked *from inside it alone*.
 `Copy` owns its lifecycle:
 
 ```ts
-// packages/library/inventory/src/domain/copy-status.ts
+// library/inventory/src/domain/copy-status.ts
 export const LEGAL_TRANSITIONS: Readonly<Record<CopyStatus, readonly CopyStatus[]>> = {
   Available: ['OnLoan', 'Damaged', 'Withdrawn'],
   OnLoan:    ['Available', 'Damaged', 'Lost'],
@@ -151,11 +151,11 @@ That mechanism, and the reasoning behind it, is
 
 | | |
 |---|---|
-| Base class | `packages/ddd-core/src/entity.ts` |
-| Identity | `packages/ddd-core/src/identifier.ts` |
-| A child entity | `packages/library/inventory/src/domain/copy.ts` |
-| Another one | `packages/library/lending/src/domain/hold-request.ts` |
-| The contrast | `packages/ddd-core/src/value-object.ts`, `packages/shared-kernel/src/isbn.ts` |
+| Base class | `foundation/ddd-core/src/entity.ts` |
+| Identity | `foundation/ddd-core/src/identifier.ts` |
+| A child entity | `library/inventory/src/domain/copy.ts` |
+| Another one | `library/lending/src/domain/hold-request.ts` |
+| The contrast | `foundation/ddd-core/src/value-object.ts`, `foundation/shared-kernel/src/isbn.ts` |
 | Tests | `tests/ddd-core.test.ts` |
 
 ---

@@ -1,7 +1,8 @@
 packages:
-  - 'packages/*'
-  - 'packages/library/*'
-  - 'packages/bookshop/*'
+  - 'foundation/*'
+  - 'library/*'
+  - 'bookshop/*'
+  - 'composition'
   - 'apps/*'
   - 'tests'
 allowBuilds:

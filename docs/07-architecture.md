@@ -13,7 +13,7 @@ Each bounded context is a workspace package, and **no context lists another as a
 dependency**:
 
 ```jsonc
-// packages/library/lending/package.json
+// library/lending/package.json
 "dependencies": {
   "@local/ddd-core":      "workspace:*",
   "@local/event-bus":     "workspace:*",
@@ -30,7 +30,7 @@ not a lint warning, and it does not depend on anyone reviewing the diff.
 Verify it yourself:
 
 ```bash
-grep -rn "from '@local/library-\|from '@local/bookshop-" packages/ | grep -v /dist/
+grep -rn "from '@local/library-\|from '@local/bookshop-" library/ bookshop/ | grep -v /dist/
 # (no output — no bounded context imports another)
 ```
 
@@ -51,7 +51,7 @@ the right answer.
 What *is* enforced is the export list, and it does the most important work:
 
 ```ts
-// packages/library/inventory/src/index.ts
+// library/inventory/src/index.ts
 export { BookStock } from './domain/book-stock.js'
 export type { CopySnapshot } from './domain/copy.js'
 // `Copy` is deliberately absent
@@ -127,7 +127,7 @@ the kernel: no other context has any business naming a loan.
 
 ## The composition root
 
-`packages/composition/src/wiring.ts` is the only file that imports more than one
+`composition/src/wiring.ts` is the only file that imports more than one
 bounded context. Everything crossing a border is one of two things:
 
 **1. An adapter implementing a port the consuming context declared.**
@@ -196,7 +196,7 @@ duplicated the moment a second entry point appears.
 There is one honest exception, and it is worth understanding rather than hiding:
 
 ```ts
-// packages/library/catalog/src/application/register-title.ts
+// library/catalog/src/application/register-title.ts
 const existing = await this.#titles.findByIsbn(isbn)
 if (existing !== undefined) throw new InvariantViolation(
   'an ISBN identifies at most one catalogue title', /* … */)
@@ -272,9 +272,9 @@ Being explicit, since it is a teaching artefact:
 | | |
 |---|---|
 | Package graph | `tsconfig.json`, `pnpm-workspace.yaml` |
-| Composition root | `packages/composition/src/wiring.ts` |
-| Ports (the ACL) | `packages/library/lending/src/application/ports.ts` |
-| A published surface | `packages/library/inventory/src/index.ts` |
+| Composition root | `composition/src/wiring.ts` |
+| Ports (the ACL) | `library/lending/src/application/ports.ts` |
+| A published surface | `library/inventory/src/index.ts` |
 | Compiler settings | `tsconfig.base.json` |
 
 ---

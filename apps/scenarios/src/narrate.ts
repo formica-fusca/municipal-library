@@ -55,7 +55,7 @@ export const events = (lines: readonly string[]): void => {
  * `buildLibrary({ onEvent: traceEvent })` does what `traceEvents: true` used to
  * do before the composition root became a package. It lives here rather than
  * there because an ANSI escape code is a fact about terminals:
- * `packages/composition` compiles with `"types": []` and could not write this
+ * `composition` compiles with `"types": []` and could not write this
  * function even if it wanted to.
  */
 export const traceEvent = (event: DomainEvent): void => {

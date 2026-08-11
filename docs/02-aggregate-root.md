@@ -51,7 +51,7 @@ maintained incrementally, it genuinely can drift, and
 
 **Nothing outside may hold a `Copy`.** TypeScript has no package-private
 modifier, so the boundary is held by the export list: `Copy` is simply absent
-from `packages/library/inventory/src/index.ts`. No other package can name the
+from `library/inventory/src/index.ts`. No other package can name the
 type, so no other package can hold one.
 
 ---
@@ -183,11 +183,11 @@ saves". Reference data needs that just as much as a rich behavioural cluster.
 
 | | |
 |---|---|
-| Base class | `packages/ddd-core/src/aggregate-root.ts` |
-| The showcase | `packages/library/inventory/src/domain/book-stock.ts` |
-| A second one with children | `packages/library/lending/src/domain/hold-queue.ts` |
-| One with none | `packages/bookshop/inventory/src/domain/stock-item.ts` |
-| Repository rule | `packages/ddd-core/src/repository.ts` |
+| Base class | `foundation/ddd-core/src/aggregate-root.ts` |
+| The showcase | `library/inventory/src/domain/book-stock.ts` |
+| A second one with children | `library/lending/src/domain/hold-queue.ts` |
+| One with none | `bookshop/inventory/src/domain/stock-item.ts` |
+| Repository rule | `foundation/ddd-core/src/repository.ts` |
 | Tests | `tests/book-stock.test.ts`, `tests/hold-queue.test.ts` |
 
 ---

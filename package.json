@@ -10,7 +10,7 @@
   "packageManager": "pnpm@11.9.0",
   "scripts": {
     "build": "tsc -b",
-    "clean": "tsc -b --clean && rm -rf packages/*/dist packages/*/*/dist apps/*/dist",
+    "clean": "tsc -b --clean && rm -rf foundation/*/dist library/*/dist bookshop/*/dist composition/dist apps/*/dist",
     "test": "tsc -b && vitest run",
     "test:watch": "vitest",
     "scenario:1": "pnpm build && tsx apps/scenarios/src/01-acquire-and-shelve.ts",
