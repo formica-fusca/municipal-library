@@ -1,7 +1,6 @@
-import type { Clock } from '@local/ddd-core'
 import { DomainError } from '@local/ddd-core'
 import type { UnitOfWork } from '@local/event-bus'
-import { MemberId } from '@local/shared-kernel'
+import { MemberId, type Clock } from '@local/shared-kernel'
 import type { MemberRepository } from '../domain/member-repository.js'
 import { Member, type BorrowEligibility, type MemberTier } from '../domain/member.js'
 

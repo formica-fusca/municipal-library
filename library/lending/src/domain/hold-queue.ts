@@ -1,12 +1,10 @@
 import {
   AggregateRoot,
   InvariantViolation,
-  addHours,
-  daysBetween,
   type Entity,
   type Identifier,
 } from '@local/ddd-core'
-import type { MemberId, TitleId } from '@local/shared-kernel'
+import { addHours, daysBetween, type MemberId, type TitleId } from '@local/shared-kernel'
 import { AlreadyInQueue, HoldNotReadyForCollection, NotInQueue } from './errors.js'
 import { HoldAllocated, HoldPlaced } from './events.js'
 import type { HoldAllocationPolicy, HoldCandidate } from './hold-allocation-policy.js'

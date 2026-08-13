@@ -224,7 +224,7 @@ machinery they both sit on, and the one place they meet.
 ```
 foundation/
   ddd-core/            Entity · AggregateRoot · ValueObject · DomainEvent · Identifier
-  shared-kernel/       Isbn · Money · TitleId · CopyId · MemberId
+  shared-kernel/       Isbn · Money · TitleId · CopyId · MemberId · Clock
   event-bus/           the hand-rolled pub/sub + UnitOfWork (dispatch after commit)
 library/
   catalog/             Title

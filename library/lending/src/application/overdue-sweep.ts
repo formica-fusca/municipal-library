@@ -1,5 +1,5 @@
-import type { Clock } from '@local/ddd-core'
 import type { UnitOfWork } from '@local/event-bus'
+import type { Clock } from '@local/shared-kernel'
 import type { LoanRepository } from '../domain/repositories.js'
 
 /**

@@ -1,7 +1,6 @@
-import type { Clock } from '@local/ddd-core'
 import { DomainError } from '@local/ddd-core'
 import type { UnitOfWork } from '@local/event-bus'
-import { Isbn, Money } from '@local/shared-kernel'
+import { Isbn, Money, type Clock } from '@local/shared-kernel'
 import { ProductId } from '../domain/identities.js'
 import type { StockItemRepository } from '../domain/stock-item-repository.js'
 import { StockItem } from '../domain/stock-item.js'

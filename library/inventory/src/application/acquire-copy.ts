@@ -1,6 +1,5 @@
-import type { Clock } from '@local/ddd-core'
 import type { UnitOfWork } from '@local/event-bus'
-import { CopyId, TitleId } from '@local/shared-kernel'
+import { CopyId, TitleId, type Clock } from '@local/shared-kernel'
 import { BookStock } from '../domain/book-stock.js'
 import type { BookStockRepository } from '../domain/book-stock-repository.js'
 

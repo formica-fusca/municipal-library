@@ -1,3 +1,5 @@
+export { addDays, addHours, daysBetween, FixedClock, systemClock } from './clock.js'
+export type { Clock } from './clock.js'
 export { CopyId, MemberId, TitleId } from './identities.js'
 export { Isbn } from './isbn.js'
 export { Money } from './money.js'

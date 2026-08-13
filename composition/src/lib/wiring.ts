@@ -1,5 +1,5 @@
-import { FixedClock } from "@local/ddd-core";
 import { EventLog, InMemoryEventBus, UnitOfWork } from "@local/event-bus";
+import { FixedClock } from "@local/shared-kernel";
 
 import { InMemoryTitleRepository, RegisterTitle } from "@local/library-catalog";
 import {
