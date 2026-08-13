@@ -1,5 +1,5 @@
-import type { AggregateRoot } from "../aggregate-root.js";
-import type { Identifier } from "../identifier.js";
+import type { AggregateRoot } from "../lib/aggregate-root.js";
+import type { Identifier } from "../lib/identifier.js";
 import type { Repository } from "../lib/repository.js";
 
 /**

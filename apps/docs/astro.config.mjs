@@ -84,6 +84,17 @@ export default defineConfig({
         'An educational showcase of Domain-Driven Design, built around a public library that lends physical books — and a small shop annex that sells them.',
       tagline: 'Domain-Driven Design, demonstrated rather than asserted',
 
+      // Rendered by Starlight's own `SocialIcons`, which `HeaderNav` delegates
+      // to — so this reaches the header without touching the override, and
+      // rides along into `MobileMenuFooter` for free.
+      social: [
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/formica-fusca/municipal-library',
+        },
+      ],
+
       customCss: ['./src/styles/custom.css'],
 
       // Starlight has no top-nav configuration; overriding `SocialIcons` is how
