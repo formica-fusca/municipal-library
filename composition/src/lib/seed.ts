@@ -1,6 +1,6 @@
 import type { MemberId, TitleId } from "@local/shared-kernel";
 
-import type { Library } from "./lib/library.js";
+import type { Library } from "./library.js";
 
 /**
  * The fixture used by most scenarios and by the integration tests: one title,
