@@ -34,7 +34,7 @@ broker?" (obviously no — it cannot know whether the transaction succeeded).
 `Entity` can record into a private buffer, and that is *all* it can do:
 
 ```ts
-// foundation/ddd-core/src/entity.ts
+// foundation/ddd-core/src/lib/entity.ts
 export abstract class Entity<TId extends Identifier> {
   readonly #recordedEvents: DomainEvent[] = []
 
@@ -55,7 +55,7 @@ No bus. No publisher. No route out.
 The only exit is the root, which drains its own buffer *and* its children's:
 
 ```ts
-// foundation/ddd-core/src/aggregate-root.ts
+// foundation/ddd-core/src/lib/aggregate-root.ts
 override pullDomainEvents(): readonly DomainEvent[] {
   const ownEvents = super.pullDomainEvents()
   const childEvents = this.childEntities().flatMap((child) => child.pullDomainEvents())
@@ -67,7 +67,7 @@ override pullDomainEvents(): readonly DomainEvent[] {
 And `pullDomainEvents()` is called in exactly one place in the entire system:
 
 ```ts
-// foundation/event-bus/src/unit-of-work.ts
+// foundation/event-bus/src/lib/unit-of-work.ts
 aggregate.assertInvariants()
 await repository.save(aggregate)
 const events = aggregate.pullDomainEvents()
@@ -233,12 +233,12 @@ mostly to make it visible: three copies arrive, one `title-became-available`.
 
 | | |
 |---|---|
-| The buffer | `foundation/ddd-core/src/entity.ts` |
-| The drain + sort | `foundation/ddd-core/src/aggregate-root.ts` |
-| Commit ordering | `foundation/event-bus/src/unit-of-work.ts` |
-| The bus | `foundation/event-bus/src/in-memory-event-bus.ts` |
+| The buffer | `foundation/ddd-core/src/lib/entity.ts` |
+| The drain + sort | `foundation/ddd-core/src/lib/aggregate-root.ts` |
+| Commit ordering | `foundation/event-bus/src/lib/unit-of-work.ts` |
+| The bus | `foundation/event-bus/src/lib/in-memory-event-bus.ts` |
 | Child records, root records | `inventory/src/domain/copy.ts` + `book-stock.ts` |
-| Every subscription in the system | `composition/src/subscriptions.ts` |
+| Every subscription in the system | `composition/src/lib/subscriptions.ts` |
 | Scenario | `pnpm scenario:5` |
 | Tests | `tests/ddd-core.test.ts`, `tests/event-bus.test.ts` |
 

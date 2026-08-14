@@ -1,4 +1,3 @@
-import { FixedClock } from '@local/ddd-core'
 import { EventLog, InMemoryEventBus, UnitOfWork } from '@local/event-bus'
 import {
   AcquireCopy,
@@ -22,7 +21,7 @@ import {
   type IdentifierFactory,
   type ShelfGateway,
 } from '@local/library-lending'
-import { MemberId, TitleId } from '@local/shared-kernel'
+import { FixedClock, MemberId, TitleId } from '@local/shared-kernel'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 /*

@@ -1,5 +1,6 @@
-import type { DomainEvent, FixedClock } from '@local/ddd-core'
+import type { DomainEvent } from '@local/ddd-core'
 import type { EventLog, InMemoryEventBus } from '@local/event-bus'
+import type { FixedClock } from '@local/shared-kernel'
 
 import type { InMemoryTitleRepository, RegisterTitle } from '@local/library-catalog'
 import type {

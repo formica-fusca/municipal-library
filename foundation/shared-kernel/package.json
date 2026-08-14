@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "The small slice of model that every bounded context agrees on: ISBN, Money, and the reference identities.",
+  "description": "The small slice every bounded context agrees on: ISBN, Money, the reference identities, and the Clock.",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

@@ -1,5 +1,5 @@
-import { AggregateRoot, InvariantViolation, addDays, daysBetween } from '@local/ddd-core'
-import type { CopyId, MemberId, TitleId } from '@local/shared-kernel'
+import { AggregateRoot, InvariantViolation } from '@local/ddd-core'
+import { addDays, daysBetween, type CopyId, type MemberId, type TitleId } from '@local/shared-kernel'
 import { LoanAlreadyClosed } from './errors.js'
 import { LoanBecameOverdue, LoanClosed, LoanOpened } from './events.js'
 import type { LoanId } from './identities.js'

@@ -1,6 +1,5 @@
-import type { Clock } from '@local/ddd-core'
 import type { UnitOfWork } from '@local/event-bus'
-import type { CopyId, MemberId, TitleId } from '@local/shared-kernel'
+import type { Clock, CopyId, MemberId, TitleId } from '@local/shared-kernel'
 import type { HoldQueueRepository, LoanRepository } from '../domain/repositories.js'
 import { LoanId } from '../domain/identities.js'
 import { Loan } from '../domain/loan.js'

@@ -207,7 +207,7 @@ async save(aggregate: TAggregate): Promise<void> {
   this.store.set(aggregate.id.value, aggregate)
 }
 
-// foundation/event-bus/src/unit-of-work.ts
+// foundation/event-bus/src/lib/unit-of-work.ts
 async commit(repository, aggregate) {
   aggregate.assertInvariants()          // refuse to write nonsense
   await repository.save(aggregate)
@@ -229,7 +229,7 @@ past its boundary and shows both the aggregate and the repository refusing it.
 | Across an aggregate | `book-stock.ts` → `assertInvariants()` |
 | Structural, non-numeric | `hold-queue.ts` → `assertInvariants()` |
 | The rule that is a policy | `library/membership/src/domain/member.ts` |
-| Error hierarchy | `foundation/ddd-core/src/errors.ts` |
+| Error hierarchy | `foundation/ddd-core/src/lib/errors.ts` |
 | Scenario | `pnpm scenario:4` |
 
 ---

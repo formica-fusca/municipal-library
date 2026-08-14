@@ -1,7 +1,6 @@
-import type { Clock } from '@local/ddd-core'
 import { InvariantViolation } from '@local/ddd-core'
 import type { UnitOfWork } from '@local/event-bus'
-import { Isbn, TitleId } from '@local/shared-kernel'
+import { Isbn, TitleId, type Clock } from '@local/shared-kernel'
 import type { TitleRepository } from '../domain/title-repository.js'
 import { Title } from '../domain/title.js'
 

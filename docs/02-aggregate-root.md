@@ -183,11 +183,11 @@ saves". Reference data needs that just as much as a rich behavioural cluster.
 
 | | |
 |---|---|
-| Base class | `foundation/ddd-core/src/aggregate-root.ts` |
+| Base class | `foundation/ddd-core/src/lib/aggregate-root.ts` |
 | The showcase | `library/inventory/src/domain/book-stock.ts` |
 | A second one with children | `library/lending/src/domain/hold-queue.ts` |
 | One with none | `bookshop/inventory/src/domain/stock-item.ts` |
-| Repository rule | `foundation/ddd-core/src/repository.ts` |
+| Repository rule | `foundation/ddd-core/src/lib/repository.ts` |
 | Tests | `tests/book-stock.test.ts`, `tests/hold-queue.test.ts` |
 
 ---

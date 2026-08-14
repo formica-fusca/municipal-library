@@ -25,7 +25,7 @@ is a Value Object.
 ## The consequence: equality ignores attributes
 
 ```ts
-// foundation/ddd-core/src/entity.ts
+// foundation/ddd-core/src/lib/entity.ts
 equals(other: Entity<Identifier> | null | undefined): boolean {
   if (other === null || other === undefined) return false
   if (other === this) return true
@@ -151,11 +151,11 @@ That mechanism, and the reasoning behind it, is
 
 | | |
 |---|---|
-| Base class | `foundation/ddd-core/src/entity.ts` |
-| Identity | `foundation/ddd-core/src/identifier.ts` |
+| Base class | `foundation/ddd-core/src/lib/entity.ts` |
+| Identity | `foundation/ddd-core/src/lib/identifier.ts` |
 | A child entity | `library/inventory/src/domain/copy.ts` |
 | Another one | `library/lending/src/domain/hold-request.ts` |
-| The contrast | `foundation/ddd-core/src/value-object.ts`, `foundation/shared-kernel/src/isbn.ts` |
+| The contrast | `foundation/ddd-core/src/lib/value-object.ts`, `foundation/shared-kernel/src/isbn.ts` |
 | Tests | `tests/ddd-core.test.ts` |
 
 ---

@@ -114,7 +114,7 @@ kernels turn into dumping grounds.
 | | Contains | Changing it means |
 |---|---|---|
 | **`ddd-core`** | `Entity`, `AggregateRoot`, `ValueObject`, `DomainEvent` | a technical library upgrade |
-| **`shared-kernel`** | `Isbn`, `Money`, `TitleId`, `CopyId`, `MemberId` | **every team sharing it must agree** |
+| **`shared-kernel`** | `Isbn`, `Money`, `TitleId`, `CopyId`, `MemberId`, `Clock` | **every team sharing it must agree** |
 
 A shared kernel is a slice of *model* that two teams both own and neither may
 change alone. That is a real organisational cost, so the bar for adding to it is
@@ -122,6 +122,12 @@ change alone. That is a real organisational cost, so the bar for adding to it is
 
 `LoanId` and `HoldRequestId` are therefore in `@local/library-lending`, not in
 the kernel: no other context has any business naming a loan.
+
+`Clock` is the acknowledged exception — a port, not vocabulary. It lives here
+because time is a business input every context reads, and because `ddd-core`
+must stay liftable into any project: `Entity` and `AggregateRoot` are patterns
+from the canon, whereas "time arrives injected" is a decision *this* domain
+made. Anything a generic core would have to guess at belongs downstream of it.
 
 ---
 
@@ -274,7 +280,7 @@ Being explicit, since it is a teaching artefact:
 | | |
 |---|---|
 | Package graph | `tsconfig.json`, `pnpm-workspace.yaml` |
-| Composition root | `composition/src/wiring.ts`, `adapters.ts`, `subscriptions.ts` |
+| Composition root | `composition/src/lib/wiring.ts`, `adapters.ts`, `subscriptions.ts` |
 | Ports (the ACL) | `library/lending/src/application/ports.ts` |
 | A published surface | `library/inventory/src/index.ts` |
 | Compiler settings | `tsconfig.base.json` |

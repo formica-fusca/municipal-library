@@ -1,6 +1,5 @@
-import type { Clock } from '@local/ddd-core'
 import type { UnitOfWork } from '@local/event-bus'
-import type { CopyId } from '@local/shared-kernel'
+import type { Clock, CopyId } from '@local/shared-kernel'
 import { UnknownLoan } from '../domain/errors.js'
 import type { LoanRepository } from '../domain/repositories.js'
 import type { ShelfGateway } from './ports.js'

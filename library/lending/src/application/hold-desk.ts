@@ -1,6 +1,5 @@
-import type { Clock } from '@local/ddd-core'
 import type { UnitOfWork } from '@local/event-bus'
-import type { MemberId, TitleId } from '@local/shared-kernel'
+import type { Clock, MemberId, TitleId } from '@local/shared-kernel'
 import { HoldNotReadyForCollection } from '../domain/errors.js'
 import type { HoldAllocationPolicy } from '../domain/hold-allocation-policy.js'
 import { HoldQueue } from '../domain/hold-queue.js'

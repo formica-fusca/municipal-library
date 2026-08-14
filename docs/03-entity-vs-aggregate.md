@@ -24,7 +24,7 @@ so they can be.
 In code, literally:
 
 ```ts
-// foundation/ddd-core/src/aggregate-root.ts
+// foundation/ddd-core/src/lib/aggregate-root.ts
 export abstract class AggregateRoot<TId extends Identifier> extends Entity<TId> {
   protected childEntities(): readonly Entity<Identifier>[] { return [] }
   override pullDomainEvents(): readonly DomainEvent[] { /* own + children */ }

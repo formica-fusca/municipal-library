@@ -1,4 +1,3 @@
-import { addHours } from '@local/ddd-core'
 import {
   COLLECTION_WINDOW_HOURS,
   HoldQueue,
@@ -6,7 +5,7 @@ import {
   SkipIneligibleAllocation,
   StrictFifoAllocation,
 } from '@local/library-lending'
-import { MemberId, TitleId } from '@local/shared-kernel'
+import { addHours, MemberId, TitleId } from '@local/shared-kernel'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 const DUNE = TitleId.of('TITLE-DUNE')
